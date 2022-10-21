@@ -18,7 +18,9 @@ export function ComboboxWithTabindex(props: ComboboxWithTabindexProps) {
   const [focusedItem, setFocusedItem] = useState<Nullable<ComboboxWithTabindexItem>>(value);
   const [expanded, setExpanded] = useState(false);
   const comboboxWrapperRef = useRef<HTMLDivElement>(null);
+  const comboboSelectionRef = useRef<HTMLInputElement>(null);
   const itemRef = useRef<HTMLLIElement[]>([]);
+  const nonItemRef = useRef<HTMLLIElement>(null);
   const ignoreHoverWhenNavigatingRef = useRef(false);
 
   useEffect(() => {
@@ -28,13 +30,80 @@ export function ComboboxWithTabindex(props: ComboboxWithTabindexProps) {
   return (
     <div>
       <Label htmlFor="dropdown-input">{label}</Label>
-      <div ref={comboboxWrapperRef}>
+      <div
+        ref={comboboxWrapperRef}
+        onKeyDown={(e) => {
+          switch (e.key) {
+            case "ArrowDown": {
+              if (!expanded) {
+                return;
+              }
+              ignoreHoverWhenNavigatingRef.current = true;
+              e.preventDefault();
+              const index = items.findIndex((item) => item === focusedItem);
+              if (focusedItem) {
+                const nextIndex = Math.min(index + 1, items.length - 1);
+                setFocusedItem(items[nextIndex]);
+                // no need to scroll as it's automatically done by the browser with focus
+                itemRef.current[nextIndex].focus();
+              } else {
+                setFocusedItem(items[0]);
+                // no need to scroll as it's automatically done by the browser with focus
+                itemRef.current[0].focus();
+              }
+              break;
+            }
+            case "ArrowUp": {
+              if (!expanded) {
+                return;
+              }
+              ignoreHoverWhenNavigatingRef.current = true;
+              e.preventDefault();
+              const index = items.findIndex((item) => item === focusedItem);
+              if (focusedItem) {
+                const previousIndex = Math.max(index - 1, 0);
+                setFocusedItem(items[previousIndex]);
+                // no need to scroll as it's automatically done by the browser with focus
+                itemRef.current[previousIndex].focus();
+              } else {
+                setFocusedItem(items[items.length - 1]);
+                // no need to scroll as it's automatically done by the browser with focus
+                itemRef.current[items.length - 1].focus();
+              }
+              break;
+            }
+            case "Enter":
+            // spacebar
+            case " ": {
+              e.preventDefault();
+              if (expanded) {
+                setExpanded(false);
+                comboboSelectionRef.current?.focus();
+                onChange?.(focusedItem);
+              } else {
+                setExpanded(true);
+              }
+              break;
+            }
+            case "Escape":
+              if (!expanded) {
+                return;
+              }
+              e.preventDefault();
+              setExpanded(false);
+              comboboSelectionRef.current?.focus();
+              break;
+          }
+        }}
+      >
         <ComboboxSelection
           role="combobox"
           aria-controls="dropdown-listitem-popup"
           aria-expanded={expanded}
           id="dropdown-input"
+          ref={comboboSelectionRef}
           $expanded={expanded}
+          tabIndex={expanded ? -1 : undefined}
           readOnly
           value={selectedItem ? selectedItem.label : "---"}
           onBlur={(e) => {
@@ -45,69 +114,13 @@ export function ComboboxWithTabindex(props: ComboboxWithTabindexProps) {
               setExpanded(false);
             }
           }}
-          onKeyDown={(e) => {
-            switch (e.key) {
-              case "ArrowDown": {
-                if (!expanded) {
-                  return;
-                }
-                ignoreHoverWhenNavigatingRef.current = true;
-                e.preventDefault();
-                const index = items.findIndex((item) => item === focusedItem);
-                if (focusedItem) {
-                  const nextIndex = Math.min(index + 1, items.length - 1);
-                  setFocusedItem(items[nextIndex]);
-                  itemRef.current[nextIndex].scrollIntoView();
-                } else {
-                  setFocusedItem(items[0]);
-                  itemRef.current[0].scrollIntoView();
-                }
-                break;
-              }
-              case "ArrowUp": {
-                if (!expanded) {
-                  return;
-                }
-                ignoreHoverWhenNavigatingRef.current = true;
-                e.preventDefault();
-                const index = items.findIndex((item) => item === focusedItem);
-                if (focusedItem) {
-                  const previousIndex = Math.max(index - 1, 0);
-                  setFocusedItem(items[previousIndex]);
-                  itemRef.current[previousIndex].scrollIntoView();
-                } else {
-                  setFocusedItem(items[items.length - 1]);
-                  itemRef.current[items.length - 1].scrollIntoView();
-                }
-                break;
-              }
-              case "Enter":
-              // spacebar
-              case " ": {
-                e.preventDefault();
-                if (expanded) {
-                  setExpanded(false);
-                  onChange?.(focusedItem);
-                } else {
-                  setExpanded(true);
-                }
-                break;
-              }
-              case "Escape":
-                if (!expanded) {
-                  return;
-                }
-                e.preventDefault();
-                setExpanded(false);
-                break;
-            }
-          }}
         />
         <ComboboxListPositioning>
           <ComboboxList $expanded={expanded} role="listbox" id="dropdown-listitem-popup">
             <ComboboxListItem
-              // needed to get click event
-              tabIndex={-1}
+              ref={nonItemRef}
+              // use roving tabindex to manage focus
+              tabIndex={expanded && !focusedItem ? 0 : -1}
               id={`dropdown-listitem-none`}
               role="option"
               aria-selected={!selectedItem}
@@ -115,10 +128,12 @@ export function ComboboxWithTabindex(props: ComboboxWithTabindexProps) {
               $focused={!focusedItem}
               onClick={() => {
                 setExpanded(false);
+                comboboSelectionRef.current?.focus();
                 onChange?.(null);
               }}
               onMouseOver={() => {
                 setFocusedItem(null);
+                nonItemRef.current?.focus();
               }}
             >
               ---
@@ -135,12 +150,14 @@ export function ComboboxWithTabindex(props: ComboboxWithTabindexProps) {
                   role="option"
                   key={id}
                   ref={(el) => (itemRef.current[index] = el!)}
-                  tabIndex={-1}
+                  // use roving tabindex to manage focus
+                  tabIndex={expanded && focused ? 0 : -1}
                   aria-selected={selected}
                   $selected={selected}
                   $focused={focused}
                   onClick={() => {
                     setExpanded(false);
+                    comboboSelectionRef.current?.focus();
                     onChange?.(item);
                   }}
                   onMouseOver={() => {
@@ -149,6 +166,7 @@ export function ComboboxWithTabindex(props: ComboboxWithTabindexProps) {
                       return;
                     }
                     setFocusedItem(item);
+                    itemRef.current[index].focus();
                   }}
                 >
                   {label}
