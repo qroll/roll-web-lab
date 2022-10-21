@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Nullable } from "../../modules/common/types";
 import { Page } from "../../modules/combobox/combobox-page";
-import { ComboboxWithTabindex, ComboboxWithTabindexItem } from "../../modules/combobox/combobox-with-tabindex";
+import {
+  ComboboxWithAriaActivedescendant,
+  ComboboxWithAriaActivedescendantItem,
+} from "../../modules/combobox/combobox-with-aria-activedescendant";
 
-export default function ComboboxWithTabindexPage() {
+export default function ComboboxWithAriaActivedescendantPage() {
   const [items] = useState([
     { id: 1, label: "quirk" },
     { id: 2, label: "alpha" },
@@ -14,16 +17,15 @@ export default function ComboboxWithTabindexPage() {
     { id: 7, label: "space" },
     { id: 8, label: "vanilla" },
   ]);
-  const [value, setValue] = useState<Nullable<ComboboxWithTabindexItem>>(null);
+  const [value, setValue] = useState<Nullable<ComboboxWithAriaActivedescendantItem>>(null);
 
   return (
     <Page
-      header="Combobox with a11y-compliant roving tabindex"
-      description="Keyboard-controllable. Adds a roving tabindex for screen readers."
-      prev={{ link: "/combobox/keyboard", label: "Prev: Combobox with keyboard controls" }}
-      next={{ link: "/combobox/aria-activedescendant", label: "Next: Combobox with aria-activedescendant" }}
+      header="Combobox with aria-activedescendant"
+      description="Keyboard-controllable. Uses aria-activedescendant to set focus for screen readers."
+      prev={{ link: "/combobox/tabindex", label: "Prev: Combobox with a11y-compliant tabindex" }}
     >
-      <ComboboxWithTabindex
+      <ComboboxWithAriaActivedescendant
         label="Label"
         items={items}
         value={value}
