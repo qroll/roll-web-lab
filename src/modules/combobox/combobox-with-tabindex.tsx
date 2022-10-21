@@ -114,6 +114,20 @@ export function ComboboxWithTabindex(props: ComboboxWithTabindexProps) {
               setExpanded(false);
             }
           }}
+          onClick={() => {
+            if (expanded) {
+              setExpanded(false);
+              comboboSelectionRef.current?.focus();
+            } else {
+              setExpanded(true);
+              if (focusedItem) {
+                const index = items.findIndex((item) => item === focusedItem);
+                itemRef.current[index].focus();
+              } else {
+                nonItemRef.current?.focus();
+              }
+            }
+          }}
         />
         <ComboboxListPositioning>
           <ComboboxList $expanded={expanded} role="listbox" id="dropdown-listitem-popup">
