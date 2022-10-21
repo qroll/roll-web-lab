@@ -19,6 +19,7 @@ export function ComboboxWithKeyboardControls(props: ComboboxWithKeyboardControls
   const [expanded, setExpanded] = useState(false);
   const comboboxWrapperRef = useRef<HTMLDivElement>(null);
   const itemRef = useRef<HTMLLIElement[]>([]);
+  const ignoreHoverWhenNavigatingRef = useRef(false);
 
   useEffect(() => {
     setSelectedItem(value);
@@ -49,13 +50,16 @@ export function ComboboxWithKeyboardControls(props: ComboboxWithKeyboardControls
                 if (!expanded) {
                   return;
                 }
+                ignoreHoverWhenNavigatingRef.current = true;
                 e.preventDefault();
                 const index = items.findIndex((item) => item === focusedItem);
                 if (focusedItem) {
                   const nextIndex = Math.min(index + 1, items.length - 1);
                   setFocusedItem(items[nextIndex]);
+                  itemRef.current[nextIndex].scrollIntoView();
                 } else {
                   setFocusedItem(items[0]);
+                  itemRef.current[0].scrollIntoView();
                 }
                 break;
               }
@@ -63,13 +67,16 @@ export function ComboboxWithKeyboardControls(props: ComboboxWithKeyboardControls
                 if (!expanded) {
                   return;
                 }
+                ignoreHoverWhenNavigatingRef.current = true;
                 e.preventDefault();
                 const index = items.findIndex((item) => item === focusedItem);
                 if (focusedItem) {
                   const previousIndex = Math.max(index - 1, 0);
                   setFocusedItem(items[previousIndex]);
+                  itemRef.current[previousIndex].scrollIntoView();
                 } else {
                   setFocusedItem(items[items.length - 1]);
+                  itemRef.current[items.length - 1].scrollIntoView();
                 }
                 break;
               }
@@ -130,6 +137,10 @@ export function ComboboxWithKeyboardControls(props: ComboboxWithKeyboardControls
                     onChange?.(item);
                   }}
                   onMouseOver={() => {
+                    if (ignoreHoverWhenNavigatingRef.current) {
+                      ignoreHoverWhenNavigatingRef.current = false;
+                      return;
+                    }
                     setFocusedItem(item);
                   }}
                 >
