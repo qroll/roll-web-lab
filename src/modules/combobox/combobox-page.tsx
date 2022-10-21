@@ -4,7 +4,7 @@ import styled from "styled-components";
 interface PageProps {
   children: React.ReactNode;
   header: string;
-  description: string;
+  description: string | React.ReactNode;
   next?: { link: string; label: string };
   prev?: { link: string; label: string };
 }
@@ -15,7 +15,7 @@ export function Page(props: PageProps) {
     <PageContainer>
       <PageContent>
         <Header>{header}</Header>
-        <p>{description}</p>
+        {React.isValidElement(description) ? description : <p>{description}</p>}
         <Label>Prev input</Label>
         <Input />
         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
