@@ -130,7 +130,19 @@ export function ComboboxWithTabindex(props: ComboboxWithTabindexProps) {
           }}
         />
         <ComboboxListPositioning>
-          <ComboboxList $expanded={expanded} role="listbox" id="dropdown-listitem-popup">
+          <ComboboxList
+            $expanded={expanded}
+            role="listbox"
+            id="dropdown-listitem-popup"
+            onBlur={(e) => {
+              if (
+                !e.nativeEvent.relatedTarget ||
+                !comboboxWrapperRef.current?.contains(e.nativeEvent.relatedTarget as Node)
+              ) {
+                setExpanded(false);
+              }
+            }}
+          >
             <ComboboxListItem
               ref={nonItemRef}
               // use roving tabindex to manage focus
