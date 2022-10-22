@@ -20,8 +20,6 @@ export default function ComboboxWithTabindexPage() {
     <Page
       header="Combobox with a11y-compliant roving tabindex"
       description="Keyboard-controllable. Adds a roving tabindex for screen readers."
-      prev={{ link: "/combobox/keyboard", label: "Prev: Combobox with keyboard controls" }}
-      next={{ link: "/combobox/aria-activedescendant", label: "Next: Combobox with aria-activedescendant" }}
     >
       <ComboboxWithTabindex
         label="Label"

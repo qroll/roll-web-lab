@@ -23,7 +23,6 @@ export default function ComboboxWithAriaActivedescendantPage() {
     <Page
       header="Combobox with aria-activedescendant"
       description="Keyboard-controllable. Uses aria-activedescendant to set focus for screen readers."
-      prev={{ link: "/combobox/tabindex", label: "Prev: Combobox with a11y-compliant tabindex" }}
     >
       <ComboboxWithAriaActivedescendant
         label="Label"

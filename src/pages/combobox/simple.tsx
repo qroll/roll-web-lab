@@ -21,7 +21,6 @@ export default function SimpleComboboxPage() {
       header="Simple combobox"
       description="Lets you click to expand or collapse the list of options and select a single option. Click outside of the
       combobox to collapse it."
-      next={{ link: "/combobox/keyboard", label: "Next: Combobox with keyboard controls" }}
     >
       <SimpleCombobox
         label="Label"

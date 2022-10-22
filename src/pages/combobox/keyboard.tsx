@@ -23,8 +23,6 @@ export default function ComboboxWithKeyboardControlsPage() {
     <Page
       header="Combobox with keyboard controls"
       description="Keyboard-controllable. Focusable via Tab or Shift+Tab. Space/Enter on the selection bar when collapsed to expand the combobox. Arrow Up/Down to navigate between options. Space/Enter to confirm selection."
-      prev={{ link: "/combobox/simple", label: "Prev: Simple combobox" }}
-      next={{ link: "/combobox/tabindex", label: "Next: Combobox with a11y-compliant tabindex" }}
     >
       <ComboboxWithKeyboardControls
         label="Label"
