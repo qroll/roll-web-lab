@@ -11,13 +11,13 @@ interface Theme {
 const ThemeContext = React.createContext<Theme>({ mode: "light", theme: LightTheme, setPreferredTheme() {} });
 
 export function ThemeSelector({ children }: { children: React.ReactNode }) {
-  const [mode, setMode] = useState<Theme["mode"]>(
-    window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
-  );
+  const [mode, setMode] = useState<Theme["mode"]>("light");
   const [preferred, setPreferred] = useState<Theme["mode"] | null>(null);
 
   useEffect(() => {
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    setMode(mediaQuery.matches ? "dark" : "light");
+    mediaQuery.addEventListener("change", (event) => {
       setMode(event.matches ? "dark" : "light");
     });
   }, []);
