@@ -21,6 +21,9 @@ export function Page(props: PageProps) {
     <PageContainer>
       <PageGrid>
         <Header>{header}</Header>
+        {/* A11Y:
+          - custom label as page has multiple nav sections
+          - we can use the header to describe the nav section */}
         <Sidebar aria-labelledby="navigation">
           <h2 id="navigation">Combobox components</h2>
           <ul>
@@ -53,6 +56,7 @@ export function Page(props: PageProps) {
         </Sidebar>
         <PageContent>
           {React.isValidElement(description) ? description : <p>{description}</p>}
+          {/* A11Y: associate label with input */}
           <Label htmlFor="input-prev">Prev input</Label>
           <Input id="input-prev" />
           <p>
