@@ -34,6 +34,6 @@ const Divider = styled.div`
   width: 1px;
 `;
 
-const NavLink = styled.a`
+const NavLink = styled.span`
   margin: 0 1rem;
 `;
