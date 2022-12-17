@@ -153,6 +153,7 @@ export function ComboboxWithAriaActivedescendant(props: ComboboxWithAriaActivede
               return (
                 <ComboboxListItem
                   id={`dropdown-listitem-${id}`}
+                  tabIndex={-1}
                   role="option"
                   key={id}
                   ref={(el) => (itemRef.current[index] = el!)}
