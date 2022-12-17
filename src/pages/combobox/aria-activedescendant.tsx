@@ -5,6 +5,8 @@ import {
   ComboboxWithAriaActivedescendant,
   ComboboxWithAriaActivedescendantItem,
 } from "../../modules/combobox/combobox-with-aria-activedescendant";
+import { Type } from "../../modules/typography/type";
+import { Checklist } from "../../modules/combobox/checklist";
 
 export default function ComboboxWithAriaActivedescendantPage() {
   const [items] = useState([
@@ -22,7 +24,46 @@ export default function ComboboxWithAriaActivedescendantPage() {
   return (
     <Page
       header="Combobox with aria-activedescendant"
-      description="Keyboard-controllable. Uses aria-activedescendant to set focus for screen readers."
+      description={
+        <>
+          <Type.Text mb="s">Keyboard-controllable, and clicking on the label focuses the input.</Type.Text>
+          <Type.Text mb="s">This uses aria-activedescendant to set focus for screen readers.</Type.Text>
+          <Type.H2 size="h300" mt="m" bold>
+            WAI-ARIA checklist
+          </Type.H2>
+          <Checklist
+            items={[
+              {
+                checked: true,
+                label: "role=combobox",
+              },
+              {
+                checked: false,
+                label: "aria-autocomplete",
+                remark: "Not applicable as this does not have search functionality",
+              },
+              {
+                checked: true,
+                label: "aria-expanded",
+              },
+              {
+                checked: true,
+                label: "role=listbox",
+                remark: "Set on the popup",
+              },
+              {
+                checked: false,
+                label: "aria-haspopup",
+                remark: "Not required if the popup role is already listbox",
+              },
+              {
+                checked: true,
+                label: "aria-activedescendant",
+              },
+            ]}
+          />
+        </>
+      }
     >
       <ComboboxWithAriaActivedescendant
         label="Label"

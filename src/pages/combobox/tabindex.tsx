@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Nullable } from "../../modules/common/types";
 import { Page } from "../../modules/combobox/combobox-page";
 import { ComboboxWithTabindex, ComboboxWithTabindexItem } from "../../modules/combobox/combobox-with-tabindex";
+import { Type } from "../../modules/typography/type";
+import { Checklist } from "../../modules/combobox/checklist";
 
 export default function ComboboxWithTabindexPage() {
   const [items] = useState([
@@ -19,7 +21,49 @@ export default function ComboboxWithTabindexPage() {
   return (
     <Page
       header="Combobox with a11y-compliant roving tabindex"
-      description="Keyboard-controllable. Adds a roving tabindex for screen readers."
+      description={
+        <>
+          <Type.Text mb="s">Keyboard-controllable, and clicking on the label focuses the input.</Type.Text>
+          <Type.Text mb="s">
+            This uses a tabindex to manage focus between the input and the selected item in the popup.
+          </Type.Text>
+          <Type.H2 size="h300" mt="m" bold>
+            WAI-ARIA checklist
+          </Type.H2>
+          <Checklist
+            items={[
+              {
+                checked: true,
+                label: "role=combobox",
+              },
+              {
+                checked: false,
+                label: "aria-autocomplete",
+                remark: "Not applicable as this does not have search functionality",
+              },
+              {
+                checked: true,
+                label: "aria-expanded",
+              },
+              {
+                checked: true,
+                label: "role=listbox",
+                remark: "Set on the popup",
+              },
+              {
+                checked: false,
+                label: "aria-haspopup",
+                remark: "Not required if the popup role is already listbox",
+              },
+              {
+                checked: false,
+                label: "aria-activedescendant",
+                remark: "Not applicable",
+              },
+            ]}
+          />
+        </>
+      }
     >
       <ComboboxWithTabindex
         label="Label"

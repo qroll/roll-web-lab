@@ -5,6 +5,7 @@ import {
   ComboboxWithKeyboardControls,
   ComboboxWithKeyboardControlsItem,
 } from "../../modules/combobox/combobox-with-keyboard-controls";
+import { Type } from "../../modules/typography/type";
 
 export default function ComboboxWithKeyboardControlsPage() {
   const [items] = useState([
@@ -22,7 +23,17 @@ export default function ComboboxWithKeyboardControlsPage() {
   return (
     <Page
       header="Combobox with keyboard controls"
-      description="Keyboard-controllable. Focusable via Tab or Shift+Tab. Space/Enter on the selection bar when collapsed to expand the combobox. Arrow Up/Down to navigate between options. Space/Enter to confirm selection."
+      description={
+        <>
+          <Type.Text mb="s">This enhances the simple combobox to be keyboard-controllable.</Type.Text>
+          <Type.Text mb="s">
+            It is focusable via <code>Tab</code> or <code>Shift+Tab</code>. When the combobox is collapsed,{" "}
+            <code>Space/Enter</code> on the input bar expands the list of options. <code>Arrow Up/Down</code> navigates
+            between options. <code>Space/Enter</code> confirms the current selection.
+          </Type.Text>
+          <Type.Text mb="s">This is still missing accessibility labelling.</Type.Text>
+        </>
+      }
     >
       <ComboboxWithKeyboardControls
         label="Label"

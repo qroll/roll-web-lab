@@ -25,6 +25,7 @@ export function SimpleCombobox(props: SimpleComboboxProps) {
   useEffect(() => {
     // collapses the combobox
     function handleOutsideClick(e: MouseEvent) {
+      // checks if the click was performed on children of the main wrapper
       if (e.target && !comboboxWrapperRef.current?.contains(e.target as Node)) {
         setExpanded(false);
       }

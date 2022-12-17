@@ -2,6 +2,7 @@ import { useState } from "react";
 import { SimpleCombobox, SimpleComboboxItem } from "../../modules/combobox/simple-combobox";
 import { Nullable } from "../../modules/common/types";
 import { Page } from "../../modules/combobox/combobox-page";
+import { Type } from "../../modules/typography/type";
 
 export default function SimpleComboboxPage() {
   const [items] = useState([
@@ -19,8 +20,19 @@ export default function SimpleComboboxPage() {
   return (
     <Page
       header="Simple combobox"
-      description="Lets you click to expand or collapse the list of options and select a single option. Click outside of the
-      combobox to collapse it."
+      description={
+        <>
+          <Type.Text mb="s">
+            This is the simplest possible implementation of a combobox, where interaction is done with a pointing device
+            only.
+          </Type.Text>
+          <Type.Text mb="s">
+            It lets you click the input to expand or collapse the list of options and select a single option. Clicking
+            outside of the combobox collapses it.
+          </Type.Text>
+          <Type.Text mb="s">This is missing keyboard interactions and accessibility labelling.</Type.Text>
+        </>
+      }
     >
       <SimpleCombobox
         label="Label"
@@ -30,11 +42,6 @@ export default function SimpleComboboxPage() {
           setValue(value);
         }}
       />
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perspiciatis, deleniti, aliquid nobis voluptas
-        repellendus alias amet asperiores tenetur dolorum nisi quidem mollitia ab adipisci consequatur doloribus error
-        soluta quaerat voluptatibus.
-      </p>
     </Page>
   );
 }

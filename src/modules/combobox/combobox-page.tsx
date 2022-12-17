@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import React from "react";
 import styled from "styled-components";
+import { Type } from "../typography/type";
 import { COMBOBOX_LINKS } from "./data";
 
 interface PageProps {
@@ -20,12 +21,16 @@ export function Page(props: PageProps) {
   return (
     <PageContainer>
       <PageGrid>
-        <Header>{header}</Header>
+        <Header bold size="h800">
+          {header}
+        </Header>
         {/* A11Y:
           - custom label as page has multiple nav sections
           - we can use the header to describe the nav section */}
         <Sidebar aria-labelledby="navigation">
-          <h2 id="navigation">Combobox components</h2>
+          <Type.H2 size="h400" semibold id="navigation">
+            Combobox components
+          </Type.H2>
           <ul>
             {COMBOBOX_LINKS.map((link) => {
               return (
@@ -55,43 +60,13 @@ export function Page(props: PageProps) {
           )}
         </Sidebar>
         <PageContent>
-          {React.isValidElement(description) ? description : <p>{description}</p>}
+          {React.isValidElement(description) ? description : <Type.Text mb="m">{description}</Type.Text>}
           {/* A11Y: associate label with input */}
           <Label htmlFor="input-prev">Prev input</Label>
           <Input id="input-prev" />
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perspiciatis, deleniti, aliquid nobis voluptas
-            repellendus alias amet asperiores tenetur dolorum nisi quidem mollitia ab adipisci consequatur doloribus
-            error soluta quaerat voluptatibus.
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perspiciatis, deleniti, aliquid nobis voluptas
-            repellendus alias amet asperiores tenetur dolorum nisi quidem mollitia ab adipisci consequatur doloribus
-            error soluta quaerat voluptatibus.
-          </p>
           <AreaOfInterest>{children}</AreaOfInterest>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perspiciatis, deleniti, aliquid nobis voluptas
-            repellendus alias amet asperiores tenetur dolorum nisi quidem mollitia ab adipisci consequatur doloribus
-            error soluta quaerat voluptatibus.
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perspiciatis, deleniti, aliquid nobis voluptas
-            repellendus alias amet asperiores tenetur dolorum nisi quidem mollitia ab adipisci consequatur doloribus
-            error soluta quaerat voluptatibus.
-          </p>
           <Label htmlFor="input-next">Next input</Label>
           <Input id="input-next" />
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perspiciatis, deleniti, aliquid nobis voluptas
-            repellendus alias amet asperiores tenetur dolorum nisi quidem mollitia ab adipisci consequatur doloribus
-            error soluta quaerat voluptatibus.
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perspiciatis, deleniti, aliquid nobis voluptas
-            repellendus alias amet asperiores tenetur dolorum nisi quidem mollitia ab adipisci consequatur doloribus
-            error soluta quaerat voluptatibus.
-          </p>
         </PageContent>
       </PageGrid>
     </PageContainer>
@@ -130,7 +105,7 @@ const PageGrid = styled.div`
   }
 `;
 
-const Header = styled.h1`
+const Header = styled(Type.H1)`
   grid-area: header;
   margin: 0;
 `;

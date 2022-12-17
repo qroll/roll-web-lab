@@ -37,6 +37,7 @@ export function ComboboxWithKeyboardControls(props: ComboboxWithKeyboardControls
             setExpanded(true);
           }}
           onBlur={(e) => {
+            // checks if the next area of focus is on children of the main wrapper
             if (
               !e.nativeEvent.relatedTarget ||
               !comboboxWrapperRef.current?.contains(e.nativeEvent.relatedTarget as Node)
@@ -51,13 +52,16 @@ export function ComboboxWithKeyboardControls(props: ComboboxWithKeyboardControls
                   return;
                 }
                 ignoreHoverWhenNavigatingRef.current = true;
+                // prevent page from scrolling too
                 e.preventDefault();
+                // navigate to next option
                 const index = items.findIndex((item) => item === focusedItem);
                 if (focusedItem) {
                   const nextIndex = Math.min(index + 1, items.length - 1);
                   setFocusedItem(items[nextIndex]);
                   itemRef.current[nextIndex].scrollIntoView();
                 } else {
+                  // pristine state, no item focused or selected yet
                   setFocusedItem(items[0]);
                   itemRef.current[0].scrollIntoView();
                 }
@@ -68,22 +72,26 @@ export function ComboboxWithKeyboardControls(props: ComboboxWithKeyboardControls
                   return;
                 }
                 ignoreHoverWhenNavigatingRef.current = true;
+                // prevent page from scrolling too
                 e.preventDefault();
+                // navigate to previous option
                 const index = items.findIndex((item) => item === focusedItem);
                 if (focusedItem) {
                   const previousIndex = Math.max(index - 1, 0);
                   setFocusedItem(items[previousIndex]);
                   itemRef.current[previousIndex].scrollIntoView();
                 } else {
+                  // pristine state, no item focused or selected yet
                   setFocusedItem(items[items.length - 1]);
                   itemRef.current[items.length - 1].scrollIntoView();
                 }
                 break;
               }
               case "Enter":
-              // spacebar
+              // spacebar key
               case " ": {
                 e.preventDefault();
+                // toggle the list visibility and select the current focused item
                 if (expanded) {
                   setExpanded(false);
                   onChange?.(focusedItem);
@@ -137,6 +145,8 @@ export function ComboboxWithKeyboardControls(props: ComboboxWithKeyboardControls
                     onChange?.(item);
                   }}
                   onMouseOver={() => {
+                    // the mouse also sets a hover state, but to avoid confusion,
+                    // we don't want to show that when user is navigating with the keyboard
                     if (ignoreHoverWhenNavigatingRef.current) {
                       ignoreHoverWhenNavigatingRef.current = false;
                       return;
