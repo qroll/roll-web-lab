@@ -24,8 +24,12 @@ const sizeMap: Record<NonNullable<TypeProps["$size"]>, { fontSize: string; lineH
 };
 
 const textStyle = css<TypeProps>`
-  font-size: ${(props) => sizeMap[props.$size].fontSize};
-  line-height: ${(props) => sizeMap[props.$size].lineHeight};
+  ${(props) =>
+    sizeMap[props.$size] &&
+    `
+font-size: ${sizeMap[props.$size].fontSize};
+line-height: ${sizeMap[props.$size].lineHeight};
+`}
 `;
 
 interface TextProps extends React.HTMLAttributes<HTMLElement>, SpacingProps {
@@ -41,7 +45,7 @@ const BaseText = ({
   displayName,
   element,
 }: {
-  defaultSize: TypeProps["$size"];
+  defaultSize: TypeProps["$size"] | undefined;
   displayName: string;
   element?: any;
 }) => {
@@ -63,7 +67,7 @@ const BaseText = ({
 };
 
 const Text = BaseText({ defaultSize: "h200", displayName: "Text" });
-const Inline = BaseText({ defaultSize: "h200", displayName: "Inline", element: "span" });
+const Inline = BaseText({ defaultSize: undefined, displayName: "Inline", element: "span" });
 const H1 = BaseText({ defaultSize: "h800", displayName: "H1", element: "h1" });
 const H2 = BaseText({ defaultSize: "h700", displayName: "H2", element: "h2" });
 const H3 = BaseText({ defaultSize: "h600", displayName: "H3", element: "h3" });
@@ -74,10 +78,16 @@ const H6 = BaseText({ defaultSize: "h300", displayName: "H6", element: "h6" });
 const StyledText = styled.p<TypeProps & SpacingProps>`
   ${textStyle}
   ${layoutStyle}
-  ${(props) => props.$bold && "font-weight: 600;"}
-  ${(props) => props.$semibold && "font-weight: 500;"}
-  ${(props) => props.$light && "font-weight: 200;"}
+  ${(props) => props.$bold && "font-weight: 700;"}
+  ${(props) => props.$semibold && "font-weight: 600;"}
+  ${(props) => props.$light && "font-weight: 300;"}
   ${(props) => props.$italic && "font-style: italic;"}
+
+  & code {
+    background-color: #eaeaea;
+    padding: 2px 4px;
+    border-radius: 2px;
+  }
 `;
 
 export const Type = {
