@@ -1,3 +1,5 @@
+import React from "react";
+import ReactMarkdown from "react-markdown";
 import styled from "styled-components";
 import CheckboxBlankIcon from "../icons/checkbox-blank-icon";
 import CheckboxCheckedIcon from "../icons/checkbox-checked-icon";
@@ -7,6 +9,7 @@ interface ChecklistProps {
   items: {
     checked: boolean;
     label: string;
+    mandatory?: boolean;
     remark?: string;
   }[];
 }
@@ -15,50 +18,52 @@ export function Checklist(props: ChecklistProps) {
   const { items } = props;
 
   return (
-    <Table>
-      <thead>
-        <tr>
-          <th>
-            <Type.Text></Type.Text>
-          </th>
-          <th>
-            <Type.Text>property</Type.Text>
-          </th>
-          <th>
-            <Type.Text>remarks</Type.Text>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {items.map((item, i) => (
-          <tr key={item.label}>
-            <td>{item.checked ? <CheckedIcon /> : <UncheckedIcon />}</td>
-            <td>
-              <Type.Text>{item.label}</Type.Text>
-            </td>
-            <td>
-              <Type.Text>{item.remark}</Type.Text>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </Table>
+    <List>
+      {items.map((item, i) => (
+        <ListItem key={item.label}>
+          <div>{item.checked ? <CheckedIcon /> : <UncheckedIcon />}</div>
+          <div>
+            <Type.Text mb="xs">
+              <ReactMarkdown
+                components={{
+                  p: React.Fragment,
+                }}
+              >
+                {item.label}
+              </ReactMarkdown>
+              {item.mandatory && <Required aria-label="required">*</Required>}
+            </Type.Text>
+            <Type.Text size="h100">{item.remark && <ReactMarkdown>{item.remark}</ReactMarkdown>}</Type.Text>
+          </div>
+        </ListItem>
+      ))}
+    </List>
   );
 }
 
-const Table = styled.table`
+const List = styled.ul`
   text-align: left;
-  border-collapse: separate;
-  border-spacing: 0.5rem;
   color: #000;
+`;
+
+const ListItem = styled.li`
+  display: flex;
+  margin-bottom: 0.75rem;
 `;
 
 const CheckedIcon = styled(CheckboxCheckedIcon)`
   width: 1.5rem;
   height: 1.5rem;
+  margin-right: 1rem;
 `;
 
 const UncheckedIcon = styled(CheckboxBlankIcon)`
   width: 1.5rem;
   height: 1.5rem;
+  margin-right: 1rem;
+`;
+
+const Required = styled(Type.Inline)`
+  color: red;
+  margin-left: 0.25rem;
 `;

@@ -66,7 +66,7 @@ export function Page(props: PageProps) {
           <Input id="input-prev" />
           <AreaOfInterest>{children}</AreaOfInterest>
           <Label htmlFor="input-next">Next input</Label>
-          <Input id="input-next" />
+          <Input id="input-next" readOnly />
         </PageContent>
       </PageGrid>
     </PageContainer>
@@ -79,6 +79,7 @@ const PageContainer = styled.div`
   background: #f5f5f5;
   color: #121212;
   min-height: 100vh;
+  padding-bottom: 10rem;
 `;
 
 const PageGrid = styled.div`

@@ -35,30 +35,76 @@ export default function ComboboxWithAriaActivedescendantPage() {
             items={[
               {
                 checked: true,
-                label: "role=combobox",
+                label: "`combobox` role",
+                mandatory: true,
+                remark: "Set on the element that displays the current value (typically an input or div).",
+              },
+              {
+                checked: true,
+                label: "`listbox` role",
+                remark: "Set on the associated popup. `tree`, `grid`, `dialog` are also supported.",
               },
               {
                 checked: false,
-                label: "aria-autocomplete",
-                remark: "Not applicable as this does not have search functionality",
+                label: "`button` role",
+                remark:
+                  "Set on the element that toggles popup visibility. This element is optional. It should not be part of the tab sequence and should not be a child of the combobox element.",
               },
               {
                 checked: true,
-                label: "aria-expanded",
+                label: "Keyboard controls",
+                remark: "Keyboard mechanisms to move focus between the combobox element and popup elements",
+              },
+            ]}
+          />
+          <Type.H3 size="h200" mt="xs" bold>
+            Combobox properties
+          </Type.H3>
+          <Checklist
+            items={[
+              {
+                checked: false,
+                label: "`aria-autocomplete`",
+                remark: "Required if autocomplete functionality is supported.",
               },
               {
                 checked: true,
-                label: "role=listbox",
-                remark: "Set on the popup",
+                label: "`aria-expanded`",
+                mandatory: true,
+                remark: "Specifies if the combobox is collapsed or expanded.",
               },
               {
                 checked: false,
-                label: "aria-haspopup",
-                remark: "Not required if the popup role is already listbox",
+                label: "`aria-haspopup`",
+                remark: "Specifies the role that the popup has. Defaults to `listbox`.",
               },
               {
                 checked: true,
-                label: "aria-activedescendant",
+                label: "`aria-controls`",
+                mandatory: true,
+                remark: "Specifies the popup id.",
+              },
+              {
+                checked: true,
+                label: "`aria-activedescendant`",
+                remark:
+                  "Specifies the current active element within the popup. Alternatively the component can use a roving tab index to manage focus.",
+              },
+              {
+                checked: false,
+                label: "`aria-errormessage`",
+              },
+              {
+                checked: false,
+                label: "`aria-invalid`",
+              },
+              {
+                checked: false,
+                label: "`aria-readonly`",
+              },
+              {
+                checked: false,
+                label: "`aria-required`",
               },
             ]}
           />
