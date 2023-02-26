@@ -2,10 +2,14 @@ import Link from "next/link";
 import styled from "styled-components";
 import { ThemeSwitcher } from "../theme/theme-switcher";
 
-function Navbar() {
+interface NavbarProps {
+  className?: string;
+}
+
+function Navbar({ className }: NavbarProps) {
   return (
     // A11Y: custom label as page has multiple nav sections
-    <NavWrapper aria-label="App">
+    <NavWrapper aria-label="App" className={className}>
       <Link href="/" passHref>
         <NavLink>Main</NavLink>
       </Link>
@@ -23,7 +27,6 @@ const NavWrapper = styled.nav`
   height: 4rem;
   display: flex;
   align-items: center;
-  margin: 1rem;
   border-radius: 1rem;
 `;
 

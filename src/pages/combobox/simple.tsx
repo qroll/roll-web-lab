@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { SimpleCombobox, SimpleComboboxItem } from "../../modules/combobox/simple-combobox";
-import { Nullable } from "../../modules/common/types";
-import { Page } from "../../modules/combobox/combobox-page";
-import { Type } from "../../modules/typography/type";
+import { SimpleCombobox, SimpleComboboxItem } from "../../components/combobox/simple-combobox";
+import { Nullable } from "../../components/common/types";
+import { Page } from "../../components/combobox/combobox-page";
+import { Type } from "../../components/typography/type";
 
 export default function SimpleComboboxPage() {
   const [items] = useState([

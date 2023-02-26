@@ -46,7 +46,6 @@ const SelectionIndicator = styled.div`
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  z-index: -1;
 
   height: 60%;
   width: 60%;
@@ -72,7 +71,6 @@ const Border = styled.div`
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  z-index: -2;
 
   height: 100%;
   width: 100%;

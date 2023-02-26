@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Nullable } from "../../modules/common/types";
-import { Page } from "../../modules/combobox/combobox-page";
-import { ComboboxWithTabindex, ComboboxWithTabindexItem } from "../../modules/combobox/combobox-with-tabindex";
-import { Type } from "../../modules/typography/type";
-import { Checklist } from "../../modules/combobox/checklist";
+import { Nullable } from "../../components/common/types";
+import { Page } from "../../components/combobox/combobox-page";
+import { ComboboxWithTabindex, ComboboxWithTabindexItem } from "../../components/combobox/combobox-with-tabindex";
+import { Type } from "../../components/typography/type";
+import { Checklist } from "../../components/combobox/checklist";
 
 export default function ComboboxWithTabindexPage() {
   const [items] = useState([

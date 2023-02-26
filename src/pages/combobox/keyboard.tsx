@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Nullable } from "../../modules/common/types";
-import { Page } from "../../modules/combobox/combobox-page";
+import { Nullable } from "../../components/common/types";
+import { Page } from "../../components/combobox/combobox-page";
 import {
   ComboboxWithKeyboardControls,
   ComboboxWithKeyboardControlsItem,
-} from "../../modules/combobox/combobox-with-keyboard-controls";
-import { Type } from "../../modules/typography/type";
+} from "../../components/combobox/combobox-with-keyboard-controls";
+import { Type } from "../../components/typography/type";
 
 export default function ComboboxWithKeyboardControlsPage() {
   const [items] = useState([

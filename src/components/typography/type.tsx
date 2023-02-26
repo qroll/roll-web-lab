@@ -2,7 +2,7 @@ import React from "react";
 import styled, { css } from "styled-components";
 import { layoutStyle, SpacingProps } from "../theme/utils";
 
-type FontSize = "h100" | "h200" | "h300" | "h400" | "h500" | "h600" | "h700" | "h800";
+export type FontSize = "h100" | "h200" | "h300" | "h400" | "h500" | "h600" | "h700" | "h800";
 
 interface TypeProps {
   $size: FontSize;
@@ -66,7 +66,7 @@ const BaseText = ({
   return TextComponent;
 };
 
-const Text = BaseText({ defaultSize: "h200", displayName: "Text" });
+const Text = BaseText({ defaultSize: "h300", displayName: "Text" });
 const Inline = BaseText({ defaultSize: undefined, displayName: "Inline", element: "span" });
 const H1 = BaseText({ defaultSize: "h800", displayName: "H1", element: "h1" });
 const H2 = BaseText({ defaultSize: "h700", displayName: "H2", element: "h2" });

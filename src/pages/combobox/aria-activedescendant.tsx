@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Nullable } from "../../modules/common/types";
-import { Page } from "../../modules/combobox/combobox-page";
+import { Nullable } from "../../components/common/types";
+import { Page } from "../../components/combobox/combobox-page";
 import {
   ComboboxWithAriaActivedescendant,
   ComboboxWithAriaActivedescendantItem,
-} from "../../modules/combobox/combobox-with-aria-activedescendant";
-import { Type } from "../../modules/typography/type";
-import { Checklist } from "../../modules/combobox/checklist";
+} from "../../components/combobox/combobox-with-aria-activedescendant";
+import { Type } from "../../components/typography/type";
+import { Checklist } from "../../components/combobox/checklist";
 
 export default function ComboboxWithAriaActivedescendantPage() {
   const [items] = useState([
