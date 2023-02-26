@@ -22,15 +22,15 @@ export default function SimpleComboboxPage() {
       header="Simple combobox"
       description={
         <>
-          <Type.Text mb="s">
+          <Type.P mb="s">
             This is the simplest possible implementation of a combobox, where interaction is done with a pointing device
             only.
-          </Type.Text>
-          <Type.Text mb="s">
+          </Type.P>
+          <Type.P mb="s">
             It lets you click the input to expand or collapse the list of options and select a single option. Clicking
             outside of the combobox collapses it.
-          </Type.Text>
-          <Type.Text mb="s">This is missing keyboard interactions and accessibility labelling.</Type.Text>
+          </Type.P>
+          <Type.P mb="s">This is missing keyboard interactions and accessibility labelling.</Type.P>
         </>
       }
     >

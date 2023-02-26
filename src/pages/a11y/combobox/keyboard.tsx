@@ -25,13 +25,13 @@ export default function ComboboxWithKeyboardControlsPage() {
       header="Combobox with keyboard controls"
       description={
         <>
-          <Type.Text mb="s">This enhances the simple combobox to be keyboard-controllable.</Type.Text>
-          <Type.Text mb="s">
+          <Type.P mb="s">This enhances the simple combobox to be keyboard-controllable.</Type.P>
+          <Type.P mb="s">
             It is focusable via <code>Tab</code> or <code>Shift+Tab</code>. When the combobox is collapsed,{" "}
             <code>Space/Enter</code> on the input bar expands the list of options. <code>Arrow Up/Down</code> navigates
             between options. <code>Space/Enter</code> confirms the current selection.
-          </Type.Text>
-          <Type.Text mb="s">This is still missing accessibility labelling.</Type.Text>
+          </Type.P>
+          <Type.P mb="s">This is still missing accessibility labelling.</Type.P>
         </>
       }
     >

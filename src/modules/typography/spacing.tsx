@@ -10,7 +10,7 @@ export const TypographySpacing = () => {
       <Type.H2 my="s" size="h400" bold>
         Specifying spacing
       </Type.H2>
-      <Type.Text my="m">Use props to set margin and paddings.</Type.Text>
+      <Type.P my="m">Use props to set margin and paddings.</Type.P>
       <Table
         headers={["prop", "description"]}
         rows={[
@@ -45,9 +45,9 @@ export const TypographySpacing = () => {
         ].map(({ prop, description }) => ({
           key: prop,
           prop: (
-            <Type.Text>
+            <Type.P>
               <code>{prop}</code>
-            </Type.Text>
+            </Type.P>
           ),
           description,
         }))}
@@ -76,7 +76,7 @@ const SpacingExample = ({ children, ...props }: { children: ReactNode } & Spacin
   );
 };
 
-const SpacedText = styled(Type.Text)`
+const SpacedText = styled(Type.P)`
   background-color: pink;
 `;
 

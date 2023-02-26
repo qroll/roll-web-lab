@@ -64,7 +64,7 @@ export function ComboboxPage(props: PageProps) {
             )} */}
           </Sidebar>
           <Form>
-            {React.isValidElement(description) ? description : <Type.Text mb="m">{description}</Type.Text>}
+            {React.isValidElement(description) ? description : <Type.P mb="m">{description}</Type.P>}
             {/* A11Y: associate label with input */}
             <Label htmlFor="input-prev">Prev input</Label>
             <Input id="input-prev" />

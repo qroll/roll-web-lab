@@ -23,7 +23,7 @@ export function Checklist(props: ChecklistProps) {
         <ListItem key={item.label}>
           <div>{item.checked ? <CheckedIcon /> : <UncheckedIcon />}</div>
           <div>
-            <Type.Text mb="xs">
+            <Type.P mb="xs">
               <ReactMarkdown
                 components={{
                   p: React.Fragment,
@@ -32,7 +32,7 @@ export function Checklist(props: ChecklistProps) {
                 {item.label}
               </ReactMarkdown>
               {item.mandatory && <Required aria-label="required">*</Required>}
-            </Type.Text>
+            </Type.P>
             <Type.Text size="h100">{item.remark && <ReactMarkdown>{item.remark}</ReactMarkdown>}</Type.Text>
           </div>
         </ListItem>

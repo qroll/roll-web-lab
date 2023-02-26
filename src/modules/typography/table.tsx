@@ -15,7 +15,7 @@ export const Table = <T,>({ headers, rows, keyExtractor }: TableProps<T>) => {
         <tr>
           {headers.map((header) => (
             <th key={header}>
-              <Type.Text semibold>{header}</Type.Text>
+              <Type.P semibold>{header}</Type.P>
             </th>
           ))}
         </tr>

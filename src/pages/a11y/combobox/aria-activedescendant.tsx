@@ -26,8 +26,8 @@ export default function ComboboxWithAriaActivedescendantPage() {
       header="Combobox with aria-activedescendant"
       description={
         <>
-          <Type.Text mb="s">Keyboard-controllable, and clicking on the label focuses the input.</Type.Text>
-          <Type.Text mb="s">This uses aria-activedescendant to set focus for screen readers.</Type.Text>
+          <Type.P mb="s">Keyboard-controllable, and clicking on the label focuses the input.</Type.P>
+          <Type.P mb="s">This uses aria-activedescendant to set focus for screen readers.</Type.P>
           <Type.H2 size="h300" mt="m" bold>
             WAI-ARIA checklist
           </Type.H2>

@@ -13,7 +13,7 @@ export const TypographySizes = () => {
         headers={["size", "example"]}
         rows={sizes.map((size) => ({
           size,
-          example: <Type.Text size={size}>The quick brown fox jumps over the lazy dog</Type.Text>,
+          example: <Type.P size={size}>The quick brown fox jumps over the lazy dog</Type.P>,
         }))}
         keyExtractor={({ size }) => size}
       />

@@ -10,11 +10,11 @@ const TypographyPage = () => {
     <Page>
       <PageContent>
         <Type.H1 bold>You must first invent the universe</Type.H1>
-        <Type.Text mb="s">Typography is a core building block of every web application.</Type.Text>
-        <Type.Text>
+        <Type.P mb="s">Typography is a core building block of every web application.</Type.P>
+        <Type.P>
           This goes with a semantics-first approach, because header hierarchy and text nesting have implications on
           accessibility. The visual style can be configured through props.
-        </Type.Text>
+        </Type.P>
         <TypographyElements />
         <TypographySizes />
         <TypographyStyling />

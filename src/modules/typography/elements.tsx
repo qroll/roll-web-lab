@@ -8,9 +8,9 @@ export const TypographyElements = () => {
         Elements
       </Type.H2>
       {(["H1", "H2", "H3", "H4", "H5", "H6", "Text", "Inline"] as const).map((el) => (
-        <Type.Text key={el}>
+        <Type.P key={el}>
           <code>Type.{el}</code>
-        </Type.Text>
+        </Type.P>
       ))}
     </>
   );

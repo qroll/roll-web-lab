@@ -66,7 +66,8 @@ const BaseText = ({
   return TextComponent;
 };
 
-const Text = BaseText({ defaultSize: "h300", displayName: "Text" });
+const Block = BaseText({ defaultSize: "h300", displayName: "Text", element: "div" });
+const P = BaseText({ defaultSize: "h300", displayName: "Text" });
 const Inline = BaseText({ defaultSize: undefined, displayName: "Inline", element: "span" });
 const H1 = BaseText({ defaultSize: "h800", displayName: "H1", element: "h1" });
 const H2 = BaseText({ defaultSize: "h700", displayName: "H2", element: "h2" });
@@ -91,7 +92,8 @@ const StyledText = styled.p<TypeProps & SpacingProps>`
 `;
 
 export const Type = {
-  Text,
+  Text: Block,
+  P,
   Inline,
   H1,
   H2,

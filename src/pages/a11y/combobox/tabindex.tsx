@@ -23,10 +23,10 @@ export default function ComboboxWithTabindexPage() {
       header="Combobox with a11y-compliant roving tabindex"
       description={
         <>
-          <Type.Text mb="s">Keyboard-controllable, and clicking on the label focuses the input.</Type.Text>
-          <Type.Text mb="s">
+          <Type.P mb="s">Keyboard-controllable, and clicking on the label focuses the input.</Type.P>
+          <Type.P mb="s">
             This uses a tabindex to manage focus between the input and the selected item in the popup.
-          </Type.Text>
+          </Type.P>
           <Type.H2 size="h300" mt="m" bold>
             WAI-ARIA checklist
           </Type.H2>
