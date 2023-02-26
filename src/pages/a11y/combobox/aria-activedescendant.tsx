@@ -42,6 +42,7 @@ export default function ComboboxWithAriaActivedescendantPage() {
               {
                 checked: true,
                 label: "`listbox` role",
+                mandatory: true,
                 remark: "Set on the associated popup. `tree`, `grid`, `dialog` are also supported.",
               },
               {
