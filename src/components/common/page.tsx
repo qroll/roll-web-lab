@@ -18,12 +18,12 @@ export const Page = ({ children }: PageProps) => {
 };
 
 export const PageContent = styled.main`
-  margin: 1rem;
+  margin: 1.2rem;
 `;
 
 const PageWrapper = styled.div`
   background: #fafafa;
-  margin-bottom: 5rem;
+  padding-bottom: 10rem;
   min-height: 100vh;
 `;
 

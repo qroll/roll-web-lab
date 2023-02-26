@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { SimpleCombobox, SimpleComboboxItem } from "../../components/combobox/simple-combobox";
-import { Nullable } from "../../components/common/types";
-import { Page } from "../../components/combobox/combobox-page";
-import { Type } from "../../components/typography/type";
+import { SimpleCombobox, SimpleComboboxItem } from "../../../components/combobox/simple-combobox";
+import { Nullable } from "../../../components/common/types";
+import { ComboboxPage } from "../../../components/combobox/combobox-page";
+import { Type } from "../../../components/typography/type";
 
 export default function SimpleComboboxPage() {
   const [items] = useState([
@@ -18,7 +18,7 @@ export default function SimpleComboboxPage() {
   const [value, setValue] = useState<Nullable<SimpleComboboxItem>>(null);
 
   return (
-    <Page
+    <ComboboxPage
       header="Simple combobox"
       description={
         <>
@@ -42,6 +42,6 @@ export default function SimpleComboboxPage() {
           setValue(value);
         }}
       />
-    </Page>
+    </ComboboxPage>
   );
 }

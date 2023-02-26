@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import React from "react";
 import styled from "styled-components";
+import { Page, PageContent } from "../common/page";
 import { Type } from "../typography/type";
 import { COMBOBOX_LINKS } from "./data";
 
@@ -10,7 +11,7 @@ interface PageProps {
   description: string | React.ReactNode;
 }
 
-export function Page(props: PageProps) {
+export function ComboboxPage(props: PageProps) {
   const { header, description, children } = props;
   const router = useRouter();
 
@@ -19,83 +20,87 @@ export function Page(props: PageProps) {
   const prev = COMBOBOX_LINKS[index - 1];
 
   return (
-    <PageContainer>
-      <PageGrid>
-        <Header bold size="h800">
-          {header}
-        </Header>
-        {/* A11Y:
+    <Page>
+      <PageContent>
+        <PageGrid>
+          <Header bold size="h800">
+            {header}
+          </Header>
+          {/* A11Y:
           - custom label as page has multiple nav sections
           - we can use the header to describe the nav section */}
-        <Sidebar aria-labelledby="navigation">
-          <Type.H2 size="h400" semibold id="navigation">
-            Combobox components
-          </Type.H2>
-          <ul>
-            {COMBOBOX_LINKS.map((link) => {
-              return (
-                <li key={link.link}>
-                  <a href={link.link}>{link.label}</a>
-                </li>
-              );
-            })}
-          </ul>
-          {prev && (
-            <button
-              onClick={() => {
-                window.location.href = prev.link;
-              }}
-            >
-              Prev: {prev.label}
-            </button>
-          )}
-          {next && (
-            <button
-              onClick={() => {
-                window.location.href = next.link;
-              }}
-            >
-              Next: {next.label}
-            </button>
-          )}
-        </Sidebar>
-        <PageContent>
-          {React.isValidElement(description) ? description : <Type.Text mb="m">{description}</Type.Text>}
-          {/* A11Y: associate label with input */}
-          <Label htmlFor="input-prev">Prev input</Label>
-          <Input id="input-prev" />
-          <AreaOfInterest>{children}</AreaOfInterest>
-          <Label htmlFor="input-next">Next input</Label>
-          <Input id="input-next" readOnly />
-        </PageContent>
-      </PageGrid>
-    </PageContainer>
+          <Sidebar aria-labelledby="navigation">
+            <Type.H2 size="h300" semibold m="m" id="navigation">
+              Combobox components
+            </Type.H2>
+            <ul>
+              {COMBOBOX_LINKS.map((link, i) => {
+                return (
+                  <li key={link.link}>
+                    <SidebarLink href={link.link} active={i === index}>
+                      {link.label}
+                    </SidebarLink>
+                  </li>
+                );
+              })}
+            </ul>
+            {/* {prev && (
+              <button
+                onClick={() => {
+                  window.location.href = prev.link;
+                }}
+              >
+                Prev: {prev.label}
+              </button>
+            )}
+            {next && (
+              <button
+                onClick={() => {
+                  window.location.href = next.link;
+                }}
+              >
+                Next: {next.label}
+              </button>
+            )} */}
+          </Sidebar>
+          <Form>
+            {React.isValidElement(description) ? description : <Type.Text mb="m">{description}</Type.Text>}
+            {/* A11Y: associate label with input */}
+            <Label htmlFor="input-prev">Prev input</Label>
+            <Input id="input-prev" />
+            <AreaOfInterest>{children}</AreaOfInterest>
+            <Label htmlFor="input-next">Next input</Label>
+            <Input id="input-next" readOnly />
+          </Form>
+        </PageGrid>
+      </PageContent>
+    </Page>
   );
 }
-
-const PageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  background: #f5f5f5;
-  color: #121212;
-  min-height: 100vh;
-  padding-bottom: 10rem;
-`;
 
 const PageGrid = styled.div`
   display: grid;
   grid-template-areas:
     ". header ."
     "sidebar content .";
-  grid-template-columns: 1fr min(100%, 500px) 1fr;
+  grid-template-columns: 1fr min(100%, 700px) 1fr;
   align-items: start;
-  justify-items: center;
+  justify-items: start;
 
   margin: 1rem;
   column-gap: 1rem;
   row-gap: 2rem;
 
-  @media (max-width: 780px) {
+  @media (max-width: 1400px) {
+    grid-template-areas:
+      ". header"
+      "sidebar content";
+    grid-template-columns: max(33%, 350px) 1fr;
+    align-items: start;
+    justify-items: start;
+  }
+
+  @media (max-width: 1000px) {
     grid-template-areas:
       "header"
       "sidebar"
@@ -116,10 +121,11 @@ const Sidebar = styled.nav`
   justify-self: end;
 
   position: sticky;
-  top: 1rem;
+  top: 2rem;
 
-  @media (max-width: 780px) {
+  @media (max-width: 1000px) {
     position: relative;
+    top: 0;
     justify-self: start;
   }
 
@@ -130,33 +136,48 @@ const Sidebar = styled.nav`
   background: #fff;
   border-radius: 10px;
   box-shadow: rgba(100, 100, 100, 0.1) 0 0 4px 4px;
-  padding: 1rem 1rem 2rem 1rem;
   margin-right: 2rem;
 
   ul {
     margin: 0;
-    padding: 0 1rem;
+    list-style: none;
   }
 
   li {
-    padding: 0;
-    margin: 0.5rem 0;
-  }
+    border-top: 1px solid #eee;
 
-  a {
-    text-decoration: underline;
+    &:last-child {
+      border-bottom: 1px solid #eee;
+    }
   }
+`;
 
-  button {
-    margin: 0.3rem 0;
-  }
+export const SidebarLink = styled.a<{ active: boolean }>`
+  padding: 1rem;
+  width: 100%;
+  display: block;
 
-  button:first-of-type {
+  ${(props) =>
+    props.active &&
+    `
+    color: #555;
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none;
+    border-left: 3px solid #e85b04;
+ `}
+`;
+
+export const SidebarButton = styled.button`
+  margin: 0.3rem 0;
+  cursor: pointer;
+
+  &:first-of-type {
     margin-top: 1rem;
   }
 `;
 
-const PageContent = styled.main`
+const Form = styled.main`
   grid-area: content;
   width: 100%;
 `;

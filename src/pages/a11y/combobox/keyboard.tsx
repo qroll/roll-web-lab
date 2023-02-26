@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Nullable } from "../../components/common/types";
-import { Page } from "../../components/combobox/combobox-page";
+import { Nullable } from "../../../components/common/types";
+import { ComboboxPage } from "../../../components/combobox/combobox-page";
 import {
   ComboboxWithKeyboardControls,
   ComboboxWithKeyboardControlsItem,
-} from "../../components/combobox/combobox-with-keyboard-controls";
-import { Type } from "../../components/typography/type";
+} from "../../../components/combobox/combobox-with-keyboard-controls";
+import { Type } from "../../../components/typography/type";
 
 export default function ComboboxWithKeyboardControlsPage() {
   const [items] = useState([
@@ -21,7 +21,7 @@ export default function ComboboxWithKeyboardControlsPage() {
   const [value, setValue] = useState<Nullable<ComboboxWithKeyboardControlsItem>>(null);
 
   return (
-    <Page
+    <ComboboxPage
       header="Combobox with keyboard controls"
       description={
         <>
@@ -43,6 +43,6 @@ export default function ComboboxWithKeyboardControlsPage() {
           setValue(value);
         }}
       />
-    </Page>
+    </ComboboxPage>
   );
 }

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Nullable } from "../../components/common/types";
-import { Page } from "../../components/combobox/combobox-page";
-import { ComboboxWithTabindex, ComboboxWithTabindexItem } from "../../components/combobox/combobox-with-tabindex";
-import { Type } from "../../components/typography/type";
-import { Checklist } from "../../components/combobox/checklist";
+import { Nullable } from "../../../components/common/types";
+import { ComboboxPage } from "../../../components/combobox/combobox-page";
+import { ComboboxWithTabindex, ComboboxWithTabindexItem } from "../../../components/combobox/combobox-with-tabindex";
+import { Type } from "../../../components/typography/type";
+import { Checklist } from "../../../components/combobox/checklist";
 
 export default function ComboboxWithTabindexPage() {
   const [items] = useState([
@@ -19,7 +19,7 @@ export default function ComboboxWithTabindexPage() {
   const [value, setValue] = useState<Nullable<ComboboxWithTabindexItem>>(null);
 
   return (
-    <Page
+    <ComboboxPage
       header="Combobox with a11y-compliant roving tabindex"
       description={
         <>
@@ -73,6 +73,6 @@ export default function ComboboxWithTabindexPage() {
           setValue(value);
         }}
       />
-    </Page>
+    </ComboboxPage>
   );
 }

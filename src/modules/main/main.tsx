@@ -35,10 +35,11 @@ const ListItem = styled.li`
 `;
 
 const ListLink = styled.span`
-  border-radius: 0.5rem;
-  border: 1px solid #bbb;
+  background: #fff;
+  border-radius: 1.5rem;
+  border: 1px solid #ddd;
   text-align: center;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
   transition: all 0.3s ease;
 
   &:hover {

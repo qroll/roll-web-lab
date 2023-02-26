@@ -18,7 +18,12 @@ const Home: NextPage = () => {
         <Type.H2 my="l">Components</Type.H2>
         <LinkList items={[{ label: "Typography", href: "/components/typography" }]} />
         <Type.H2 my="l">Accessibility experiments</Type.H2>
-        <LinkList items={[{ label: "Checkbox", href: "/a11y/checkbox" }]} />
+        <LinkList
+          items={[
+            { label: "Checkbox", href: "/a11y/checkbox" },
+            { label: "Combobox", href: "/a11y/combobox/simple" },
+          ]}
+        />
       </PageContent>
     </Page>
   );
