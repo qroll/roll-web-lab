@@ -89,6 +89,10 @@ const StyledText = styled.p<TypeProps & SpacingProps>`
     padding: 2px 4px;
     border-radius: 2px;
   }
+
+  & a {
+    color: #3267bd;
+  }
 `;
 
 export const Type = {

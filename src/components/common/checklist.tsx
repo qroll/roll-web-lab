@@ -21,9 +21,9 @@ export function Checklist(props: ChecklistProps) {
     <List>
       {items.map((item, i) => (
         <ListItem key={item.label}>
-          <div>{item.checked ? <CheckedIcon /> : <UncheckedIcon />}</div>
+          <div>{item.checked ? <CheckedIcon aria-label="Complete" /> : <UncheckedIcon aria-label="Incomplete" />}</div>
           <div>
-            <Type.P mb="xs">
+            <Type.P mb="xs" size="h200">
               <ReactMarkdown
                 components={{
                   p: React.Fragment,
@@ -31,7 +31,7 @@ export function Checklist(props: ChecklistProps) {
               >
                 {item.label}
               </ReactMarkdown>
-              {item.mandatory && <Required aria-label="required">*</Required>}
+              {!item.mandatory && <Optional>(optional)</Optional>}
             </Type.P>
             <Type.Text size="h100">{item.remark && <ReactMarkdown>{item.remark}</ReactMarkdown>}</Type.Text>
           </div>
@@ -63,7 +63,6 @@ const UncheckedIcon = styled(CheckboxBlankIcon)`
   margin-right: 1rem;
 `;
 
-const Required = styled(Type.Inline)`
-  color: red;
+const Optional = styled(Type.Inline).attrs({ size: "h100" })`
   margin-left: 0.25rem;
 `;

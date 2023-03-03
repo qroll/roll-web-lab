@@ -6,7 +6,7 @@ import {
   ComboboxWithAriaActivedescendantItem,
 } from "../../../components/combobox/combobox-with-aria-activedescendant";
 import { Type } from "../../../components/typography/type";
-import { Checklist } from "../../../components/combobox/checklist";
+import { Checklist } from "../../../components/common/checklist";
 
 export default function ComboboxWithAriaActivedescendantPage() {
   const [items] = useState([

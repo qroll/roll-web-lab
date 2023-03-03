@@ -3,7 +3,7 @@ import { Nullable } from "../../../components/common/types";
 import { ComboboxPage } from "../../../components/combobox/combobox-page";
 import { ComboboxWithTabindex, ComboboxWithTabindexItem } from "../../../components/combobox/combobox-with-tabindex";
 import { Type } from "../../../components/typography/type";
-import { Checklist } from "../../../components/combobox/checklist";
+import { Checklist } from "../../../components/common/checklist";
 
 export default function ComboboxWithTabindexPage() {
   const [items] = useState([
