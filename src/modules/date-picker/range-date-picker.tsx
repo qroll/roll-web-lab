@@ -1,34 +1,205 @@
+import React from "react";
 import { DayOfWeek, LocalDate, DateTimeFormatter } from "@js-joda/core";
 import "@js-joda/timezone";
 import { Locale } from "@js-joda/locale_en";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 
+const INPUT_FORMAT = "dd-MM-YYYY";
+const INVALID_DATE = "invalid_date";
+
+interface DateInputProps {
+  focused: boolean;
+  value: LocalDate | null;
+  hoverDate?: LocalDate | null;
+  onChange: (val: LocalDate | typeof INVALID_DATE) => void;
+}
+
+interface DateInputRef {
+  setValue: (val: LocalDate | null) => void;
+}
+
+const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInputProps> = (
+  { focused, value, hoverDate, onChange },
+  ref
+) => {
+  const [day, setDay] = useStateRef<string>("");
+  const [month, setMonth] = useStateRef<string>("");
+  const [year, setYear] = useStateRef<string>("");
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const updateStateFromValue = (val: LocalDate | null) => {
+    if (value) {
+      setDay(value.dayOfMonth().toString().padStart(2, "0"));
+      setMonth(value.monthValue().toString().padStart(2, "0"));
+      setYear(value.year().toString());
+    } else {
+      setDay("");
+      setMonth("");
+      setYear("");
+    }
+  };
+
+  useEffect(() => {
+    updateStateFromValue(value);
+  }, [value]);
+
+  useImperativeHandle(ref, () => {
+    return {
+      setValue(value: LocalDate | null) {
+        updateStateFromValue(value);
+      },
+    };
+  });
+
+  return (
+    <InputWrapper
+      ref={wrapperRef}
+      $focused={focused}
+      onBlur={(e) => {
+        if (!wrapperRef.current?.contains(e.relatedTarget)) {
+          try {
+            const date = LocalDate.of(parseInt(year), parseInt(month), parseInt(day));
+            onChange(date);
+          } catch (err) {
+            onChange(INVALID_DATE);
+          }
+        }
+      }}
+    >
+      <Input
+        name="day"
+        $hoverStyle={!!hoverDate}
+        value={hoverDate ? hoverDate.dayOfMonth().toString().padStart(2, "0") : day}
+        onChange={(e) => {
+          setDay(e.target.value);
+        }}
+        maxLength={2}
+        onBlur={() => {
+          if (day.length === 1) {
+            setDay(day.padStart(2, "0"));
+          }
+        }}
+      />
+      <>/</>
+      <Input
+        name="month"
+        $hoverStyle={!!hoverDate}
+        value={hoverDate ? hoverDate.monthValue().toString().padStart(2, "0") : month}
+        onChange={(e) => {
+          setMonth(e.target.value);
+        }}
+        maxLength={2}
+        onBlur={() => {
+          if (month.length === 1) {
+            setMonth(month.padStart(2, "0"));
+          }
+        }}
+      />
+      <>/</>
+      <YearInput
+        name="year"
+        $hoverStyle={!!hoverDate}
+        value={hoverDate ? hoverDate.year() : year}
+        onChange={(e) => {
+          setYear(e.target.value);
+        }}
+        maxLength={4}
+      />
+    </InputWrapper>
+  );
+};
+
+const DateInput = forwardRef(DateInputComponent);
+
 export const RangeDatePicker = () => {
-  return <RangeCalendar />;
+  const [startDate, setStartDate] = useState<LocalDate | null>(null);
+  const [endDate, setEndDate] = useState<LocalDate | null>(null);
+  const [hoverDate, setHoverDate] = useState<LocalDate | null>(null);
+  const [focus, setFocus] = useState<"start" | "end">("start");
+  const startDateInputRef = useRef<DateInputRef>(null);
+  const endDateInputRef = useRef<DateInputRef>(null);
+
+  return (
+    <>
+      <Picker>
+        <DateInput
+          ref={startDateInputRef}
+          focused={focus === "start"}
+          value={startDate}
+          hoverDate={focus === "start" ? hoverDate : null}
+          onChange={(val) => {
+            if (val === INVALID_DATE) {
+              startDateInputRef.current?.setValue(startDate);
+            } else {
+              setStartDate(val);
+            }
+          }}
+        />
+        <Separator />
+        <DateInput
+          ref={endDateInputRef}
+          focused={focus === "end"}
+          value={endDate}
+          hoverDate={focus === "end" ? hoverDate : null}
+          onChange={(val) => {
+            if (val === INVALID_DATE) {
+              endDateInputRef.current?.setValue(endDate);
+            } else {
+              setEndDate(val);
+            }
+          }}
+        />
+      </Picker>
+      <RangeCalendar
+        currentFocus={focus}
+        startDate={startDate}
+        endDate={endDate}
+        onChange={(start, end) => {
+          if (focus === "start") {
+            setFocus("end");
+            if (endDate) {
+              setEndDate(null);
+            }
+            setStartDate(start);
+          } else {
+            setFocus("start");
+            setEndDate(end);
+          }
+        }}
+        onHover={(hover) => {
+          setHoverDate(hover);
+        }}
+      />
+    </>
+  );
 };
 
 interface RangeCalendarProps {
+  currentFocus: "start" | "end";
+  startDate: LocalDate | null;
+  endDate: LocalDate | null;
   onChange?: (start: LocalDate | null, end: LocalDate | null) => void;
+  onHover?: (hover: LocalDate | null) => void;
 }
 
 const useStateRef = <T,>(initialValue: T) => {
-  const [val, setVal] = useState<T>();
+  const [val, setVal] = useState<T>(initialValue);
   const ref = useRef<T>(initialValue);
 
   const setter = useCallback((v: T) => {
+    ref.current = v;
     setVal(v);
   }, []) as typeof setVal;
 
   return [val, setter, ref] as const;
 };
 
-export const RangeCalendar = ({ onChange }: RangeCalendarProps) => {
-  const [selectedStartDate, setSelectedStartDate, selectedStartDateRef] = useStateRef<LocalDate | null>(null);
-  const [selectedEndDate, setSelectedEndDate, selectedEndDateRef] = useStateRef<LocalDate | null>(null);
+export const RangeCalendar = ({ currentFocus, startDate, endDate, onChange, onHover }: RangeCalendarProps) => {
+  const [selectedStartDate, setSelectedStartDate, selectedStartDateRef] = useStateRef<LocalDate | null>(startDate);
+  const [selectedEndDate, setSelectedEndDate, selectedEndDateRef] = useStateRef<LocalDate | null>(endDate);
   const [focusedDate, setFocusedDate] = useState(LocalDate.now());
   const [hoveredDate, setHoveredDate] = useState<LocalDate | null>(null);
-  const [focus, setFocus] = useState<"start" | "end">("start");
   const today = useMemo(() => LocalDate.now(), []);
 
   const days = useMemo(() => {
@@ -45,6 +216,14 @@ export const RangeCalendar = ({ onChange }: RangeCalendarProps) => {
     return weeks;
   }, [focusedDate]);
 
+  useEffect(() => {
+    setSelectedStartDate(startDate);
+  }, [startDate]);
+
+  useEffect(() => {
+    setSelectedEndDate(endDate);
+  }, [endDate]);
+
   return (
     <Grid
       role="grid"
@@ -52,6 +231,7 @@ export const RangeCalendar = ({ onChange }: RangeCalendarProps) => {
       aria-activedescendant={focusedDate.toString()}
       onMouseLeave={() => {
         setHoveredDate(null);
+        onHover?.(null);
       }}
       onKeyDown={(e) => {
         switch (e.key) {
@@ -78,15 +258,10 @@ export const RangeCalendar = ({ onChange }: RangeCalendarProps) => {
           case "Enter":
           case "Space": {
             e.preventDefault();
-            if (focus === "start") {
-              if (selectedEndDate) {
-                setSelectedEndDate(null);
-              }
+            if (currentFocus === "start") {
               setSelectedStartDate(focusedDate);
-              setFocus("end");
             } else {
               setSelectedEndDate(focusedDate);
-              setFocus("start");
             }
             setFocusedDate(focusedDate);
             onChange?.(selectedStartDateRef.current, selectedEndDateRef.current);
@@ -126,17 +301,13 @@ export const RangeCalendar = ({ onChange }: RangeCalendarProps) => {
                 aria-label={label}
                 onMouseOver={() => {
                   setHoveredDate(day);
+                  onHover?.(day);
                 }}
                 onClick={() => {
-                  if (focus === "start") {
-                    if (selectedEndDate) {
-                      setSelectedEndDate(null);
-                    }
+                  if (currentFocus === "start") {
                     setSelectedStartDate(day);
-                    setFocus("end");
                   } else {
                     setSelectedEndDate(day);
-                    setFocus("start");
                   }
                   setFocusedDate(day);
                   onChange?.(selectedStartDateRef.current, selectedEndDateRef.current);
@@ -151,6 +322,51 @@ export const RangeCalendar = ({ onChange }: RangeCalendarProps) => {
     </Grid>
   );
 };
+
+// INPUT STYLES
+
+const Picker = styled.div`
+  display: flex;
+`;
+
+const Input = styled.input<{ $hoverStyle?: boolean }>`
+  width: 1.5rem;
+  border: none;
+  display: flex;
+  justify-content: center;
+  outline: none;
+
+  ${(props) => props.$hoverStyle && "color: #888;"}
+`;
+
+const YearInput = styled.input<{ $hoverStyle?: boolean }>`
+  width: 3rem;
+  border: none;
+  display: flex;
+  justify-content: center;
+  outline: none;
+
+  ${(props) => props.$hoverStyle && "color: #888;"}
+`;
+
+const InputWrapper = styled.div<{ $focused: boolean }>`
+  border: 1px solid black;
+  border-radius: 3px;
+  display: flex;
+  width: fit-content;
+  padding: 0.5rem 1rem;
+
+  ${(props) => props.$focused && "box-shadow: 0 0 1px 1px #fab;"}
+  :focus-within {
+    box-shadow: 0 0 1px 1px #fab;
+  }
+`;
+
+const Separator = styled.div`
+  width: 1rem;
+`;
+
+// CALENDAR STYLES
 
 const Grid = styled.div`
   width: fit-content;
