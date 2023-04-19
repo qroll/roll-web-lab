@@ -7,6 +7,8 @@ import { DateInput, DateInputRef } from "./date-input";
 const INVALID_DATE = "invalid_date";
 
 export const RangeDatePicker = () => {
+  const [actualStartDate, setActualStartDate] = useState<LocalDate | null>(null);
+  const [actualEndDate, setActualEndDate] = useState<LocalDate | null>(null);
   const [startDate, setStartDate] = useState<LocalDate | null>(null);
   const [endDate, setEndDate] = useState<LocalDate | null>(null);
   const [hoverDate, setHoverDate] = useState<LocalDate | null>(null);
@@ -72,6 +74,14 @@ export const RangeDatePicker = () => {
         }}
         onHover={(hover) => {
           setHoverDate(hover);
+        }}
+        onCancel={() => {
+          setStartDate(actualStartDate);
+          setEndDate(actualEndDate);
+        }}
+        onConfirm={() => {
+          setActualStartDate(startDate);
+          setActualEndDate(endDate);
         }}
       />
     </>

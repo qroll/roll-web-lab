@@ -12,6 +12,8 @@ interface RangeCalendarProps {
   endDate: LocalDate | null;
   onChange?: (start: LocalDate | null, end: LocalDate | null) => void;
   onHover?: (hover: LocalDate | null) => void;
+  onCancel?: () => void;
+  onConfirm?: () => void;
 }
 
 export interface CalendarRef {
@@ -23,7 +25,7 @@ const isBetween = (val: LocalDate, start: LocalDate, end: LocalDate): boolean =>
 };
 
 const RangeCalendarComponent: React.ForwardRefRenderFunction<CalendarRef, RangeCalendarProps> = (
-  { currentFocus, startDate, endDate, onChange, onHover },
+  { currentFocus, startDate, endDate, onChange, onHover, onCancel, onConfirm },
   ref
 ) => {
   const [selectedStartDate, setSelectedStartDate, selectedStartDateRef] = useStateRef<LocalDate | null>(startDate);
@@ -213,6 +215,8 @@ const RangeCalendarComponent: React.ForwardRefRenderFunction<CalendarRef, RangeC
           </Row>
         ))}
       </Grid>
+      <ActionButton onClick={onCancel}>Cancel</ActionButton>
+      <ActionButton onClick={onConfirm}>Confirm</ActionButton>
     </Wrapper>
   );
 };
@@ -310,4 +314,16 @@ const Wrapper = styled.div`
 const Header = styled.div`
   display: flex;
   align-items: center;
+`;
+
+const ActionButton = styled.button`
+  padding: 0.5rem;
+  color: #888;
+  cursor: pointer;
+  border-radius: 3px;
+
+  &:hover {
+    color: #000;
+    background: #eee;
+  }
 `;

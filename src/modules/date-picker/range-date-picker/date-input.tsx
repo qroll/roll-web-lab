@@ -149,9 +149,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
             try {
               const date = LocalDate.of(parseInt(value), parseInt(month), parseInt(day));
               onChange(date);
-            } catch (err) {
-              onChange(INVALID_DATE);
-            }
+            } catch (err) {}
           }
         }}
         maxLength={4}
