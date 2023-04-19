@@ -17,7 +17,7 @@ export const RangeDatePicker = ({ disabled = false }: RangeDatePickerProps) => {
   const [startDate, setStartDate] = useState<LocalDate | null>(null);
   const [endDate, setEndDate] = useState<LocalDate | null>(null);
   const [hoverDate, setHoverDate] = useState<LocalDate | null>(null);
-  const [focus, setFocus] = useState<"start" | "end" | null>(null);
+  const [focus, setFocus, focusRef] = useStateRef<"start" | "end" | null>(null);
   const [open, setOpen] = useState(false);
   const [, setHasSelectedStart, hasSelectedStartRef] = useStateRef(false);
   const [, setHasSelectedEnd, hasSelectedEndRef] = useStateRef(false);
@@ -38,8 +38,13 @@ export const RangeDatePicker = ({ disabled = false }: RangeDatePickerProps) => {
       ref={wrapperRef}
       tabIndex={disabled ? undefined : -1}
       onFocus={(e) => {
-        if (document.activeElement === wrapperRef.current) {
+        if (e.target === wrapperRef.current) {
           setFocus("start");
+        }
+        if (startDateInputRef.current?.ref.current?.contains(e.target) && startDate) {
+          calendarRef.current?.updateFocusedDate(startDate);
+        } else if (endDateInputRef.current?.ref.current?.contains(e.target) && endDate) {
+          calendarRef.current?.updateFocusedDate(endDate);
         }
         setOpen(true);
       }}
@@ -62,9 +67,6 @@ export const RangeDatePicker = ({ disabled = false }: RangeDatePickerProps) => {
           disabled={disabled}
           onFocus={() => {
             setFocus("start");
-            if (startDate) {
-              calendarRef.current?.updateFocusedDate(startDate);
-            }
           }}
           onChange={(val) => {
             if (val === INVALID_DATE) {
@@ -92,9 +94,6 @@ export const RangeDatePicker = ({ disabled = false }: RangeDatePickerProps) => {
           disabled={disabled}
           onFocus={() => {
             setFocus("end");
-            if (endDate) {
-              calendarRef.current?.updateFocusedDate(endDate);
-            }
           }}
           onChange={(val) => {
             if (val === INVALID_DATE) {
@@ -113,44 +112,42 @@ export const RangeDatePicker = ({ disabled = false }: RangeDatePickerProps) => {
           }}
         />
       </Picker>
-      {open && (
-        <CalendarWrapper>
-          <RangeCalendar
-            ref={calendarRef}
-            currentFocus={focus!}
-            startDate={startDate}
-            endDate={endDate}
-            onChange={(start, end) => {
-              if (focus === "start") {
-                setHasSelectedStart(true);
-                if (!(hasSelectedStartRef.current && hasSelectedEndRef.current)) {
-                  setFocus("end");
-                }
-                setStartDate(start);
-              } else {
-                setHasSelectedEnd(true);
-                if (!(hasSelectedStartRef.current && hasSelectedEndRef.current)) {
-                  setFocus("start");
-                }
-                setEndDate(end);
+      <CalendarWrapper $open={open}>
+        <RangeCalendar
+          ref={calendarRef}
+          currentFocus={focus!}
+          startDate={startDate}
+          endDate={endDate}
+          onChange={(start, end) => {
+            if (focus === "start") {
+              setHasSelectedStart(true);
+              if (!(hasSelectedStartRef.current && hasSelectedEndRef.current)) {
+                setFocus("end");
               }
-            }}
-            onHover={(hover) => {
-              setHoverDate(hover);
-            }}
-            onCancel={() => {
-              setStartDate(actualStartDate);
-              setEndDate(actualEndDate);
-            }}
-            onConfirm={() => {
-              setActualStartDate(startDate);
-              setActualEndDate(endDate);
-              setOpen(false);
-              setFocus(null);
-            }}
-          />
-        </CalendarWrapper>
-      )}
+              setStartDate(start);
+            } else {
+              setHasSelectedEnd(true);
+              if (!(hasSelectedStartRef.current && hasSelectedEndRef.current)) {
+                setFocus("start");
+              }
+              setEndDate(end);
+            }
+          }}
+          onHover={(hover) => {
+            setHoverDate(hover);
+          }}
+          onCancel={() => {
+            setStartDate(actualStartDate);
+            setEndDate(actualEndDate);
+          }}
+          onConfirm={() => {
+            setActualStartDate(startDate);
+            setActualEndDate(endDate);
+            setOpen(false);
+            setFocus(null);
+          }}
+        />
+      </CalendarWrapper>
     </Wrapper>
   );
 };
@@ -170,7 +167,8 @@ const Wrapper = styled.div<{ $focused?: boolean }>`
   }
 `;
 
-const CalendarWrapper = styled.div`
+const CalendarWrapper = styled.div<{ $open: boolean }>`
+  ${(props) => !props.$open && "display: none;"}
   position: absolute;
   top: calc(100% + 1rem);
   background: #fff;

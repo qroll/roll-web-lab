@@ -20,6 +20,7 @@ interface DateInputProps {
 export interface DateInputRef {
   setValue: (val: LocalDate | null) => void;
   focus: () => void;
+  ref: React.RefObject<HTMLDivElement>;
 }
 
 const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInputProps> = (
@@ -79,6 +80,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
       focus() {
         dayInputRef.current?.focus();
       },
+      ref: wrapperRef,
     };
   });
 
