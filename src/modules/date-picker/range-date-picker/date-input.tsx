@@ -18,6 +18,7 @@ interface DateInputProps {
 
 export interface DateInputRef {
   setValue: (val: LocalDate | null) => void;
+  focus: () => void;
 }
 
 const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInputProps> = (
@@ -58,12 +59,24 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
         (document.activeElement as HTMLInputElement).blur();
       }
     }
+    if (focused) {
+      if (
+        document.activeElement !== dayInputRef.current &&
+        document.activeElement !== monthInputRef.current &&
+        document.activeElement !== yearInputRef.current
+      ) {
+        dayInputRef.current?.focus();
+      }
+    }
   }, [focused]);
 
   useImperativeHandle(ref, () => {
     return {
       setValue(value: LocalDate | null) {
         updateStateFromValue(value);
+      },
+      focus() {
+        dayInputRef.current?.focus();
       },
     };
   });
@@ -77,9 +90,12 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
     }
   };
 
+  const hoverStyle = !!hoverDate && (value ? !hoverDate.isEqual(value) : true);
+
   return (
     <InputWrapper
       ref={wrapperRef}
+      $focused={focused}
       onBlur={(e) => {
         if (!wrapperRef.current?.contains(e.relatedTarget)) {
           try {
@@ -110,7 +126,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
         ref={dayInputRef}
         name="day"
         placeholder="DD"
-        $hoverStyle={!!hoverDate}
+        $hoverStyle={hoverStyle}
         value={hoverDate ? hoverDate.dayOfMonth().toString().padStart(2, "0") : day}
         onChange={(e) => {
           const value = e.target.value.replace(/[^0-9]/, "");
@@ -132,7 +148,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
         ref={monthInputRef}
         name="month"
         placeholder="MM"
-        $hoverStyle={!!hoverDate}
+        $hoverStyle={hoverStyle}
         value={hoverDate ? hoverDate.monthValue().toString().padStart(2, "0") : month}
         onChange={(e) => {
           const value = e.target.value.replace(/[^0-9]/, "");
@@ -160,7 +176,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
         ref={yearInputRef}
         name="year"
         placeholder="YYYY"
-        $hoverStyle={!!hoverDate}
+        $hoverStyle={hoverStyle}
         value={hoverDate ? hoverDate.year() : year}
         onChange={(e) => {
           const value = e.target.value.replace(/[^0-9]/, "");
@@ -206,11 +222,12 @@ const YearInput = styled.input<{ $hoverStyle?: boolean }>`
   ${(props) => props.$hoverStyle && "color: #888;"}
 `;
 
-const InputWrapper = styled.div`
+const InputWrapper = styled.div<{ $focused?: boolean }>`
   display: flex;
   width: 10rem;
   padding: 0.5rem 1rem;
   position: relative;
+  ${(props) => props.$focused && "border-bottom: 2px solid #fab;"}
 `;
 
 const Placeholder = styled.div`
