@@ -7,7 +7,11 @@ import { useStateRef } from "./use-state-ref";
 
 const INVALID_DATE = "invalid_date";
 
-export const RangeDatePicker = () => {
+interface RangeDatePickerProps {
+  disabled?: boolean;
+}
+
+export const RangeDatePicker = ({ disabled = false }: RangeDatePickerProps) => {
   const [actualStartDate, setActualStartDate] = useState<LocalDate | null>(null);
   const [actualEndDate, setActualEndDate] = useState<LocalDate | null>(null);
   const [startDate, setStartDate] = useState<LocalDate | null>(null);
@@ -32,7 +36,7 @@ export const RangeDatePicker = () => {
   return (
     <Wrapper
       ref={wrapperRef}
-      tabIndex={-1}
+      tabIndex={disabled ? undefined : -1}
       onFocus={(e) => {
         if (document.activeElement === wrapperRef.current) {
           setFocus("start");
@@ -55,6 +59,7 @@ export const RangeDatePicker = () => {
           value={startDate}
           hoverDate={focus === "start" ? hoverDate : null}
           placeholder="From"
+          disabled={disabled}
           onFocus={() => {
             setFocus("start");
             if (startDate) {
@@ -84,6 +89,7 @@ export const RangeDatePicker = () => {
           value={endDate}
           hoverDate={focus === "end" ? hoverDate : null}
           placeholder="To"
+          disabled={disabled}
           onFocus={() => {
             setFocus("end");
             if (endDate) {

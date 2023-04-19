@@ -11,6 +11,7 @@ interface DateInputProps {
   value: LocalDate | null;
   hoverDate?: LocalDate | null;
   placeholder?: string;
+  disabled?: boolean;
   onChange: (val: LocalDate | typeof INVALID_DATE) => void;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -22,7 +23,7 @@ export interface DateInputRef {
 }
 
 const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInputProps> = (
-  { focused, value, hoverDate, placeholder, onChange, onFocus, onBlur },
+  { focused, value, hoverDate, placeholder, disabled = false, onChange, onFocus, onBlur },
   ref
 ) => {
   const [day, setDay, dayRef] = useStateRef<string>("");
@@ -113,7 +114,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
     >
       {!focused && !value && !hoverDate && (
         <Placeholder
-          tabIndex={0}
+          tabIndex={disabled ? undefined : 0}
           onFocus={() => {
             dayInputRef.current?.focus();
             onFocus?.();
@@ -126,6 +127,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
         ref={dayInputRef}
         name="day"
         placeholder="DD"
+        disabled={disabled}
         $hoverStyle={hoverStyle}
         value={hoverDate ? hoverDate.dayOfMonth().toString().padStart(2, "0") : day}
         onChange={(e) => {
@@ -148,6 +150,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
         ref={monthInputRef}
         name="month"
         placeholder="MM"
+        disabled={disabled}
         $hoverStyle={hoverStyle}
         value={hoverDate ? hoverDate.monthValue().toString().padStart(2, "0") : month}
         onChange={(e) => {
@@ -176,6 +179,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
         ref={yearInputRef}
         name="year"
         placeholder="YYYY"
+        disabled={disabled}
         $hoverStyle={hoverStyle}
         value={hoverDate ? hoverDate.year() : year}
         onChange={(e) => {
