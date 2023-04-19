@@ -177,6 +177,7 @@ const CalendarWrapper = styled.div`
   border-radius: 4px;
   box-shadow: 0 0 2px 3px #0001;
   padding: 0.5rem;
+  z-index: 1;
 `;
 
 const Picker = styled.div`
