@@ -10,7 +10,10 @@ interface DateInputProps {
   focused: boolean;
   value: LocalDate | null;
   hoverDate?: LocalDate | null;
+  placeholder?: string;
   onChange: (val: LocalDate | typeof INVALID_DATE) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
 export interface DateInputRef {
@@ -18,7 +21,7 @@ export interface DateInputRef {
 }
 
 const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInputProps> = (
-  { focused, value, hoverDate, onChange },
+  { focused, value, hoverDate, placeholder, onChange, onFocus, onBlur },
   ref
 ) => {
   const [day, setDay, dayRef] = useStateRef<string>("");
@@ -77,7 +80,6 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
   return (
     <InputWrapper
       ref={wrapperRef}
-      $focused={focused}
       onBlur={(e) => {
         if (!wrapperRef.current?.contains(e.relatedTarget)) {
           try {
@@ -87,11 +89,27 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
             onChange(INVALID_DATE);
           }
         }
+        onBlur?.();
+      }}
+      onFocus={() => {
+        onFocus?.();
       }}
     >
+      {!focused && !value && !hoverDate && (
+        <Placeholder
+          tabIndex={0}
+          onFocus={() => {
+            dayInputRef.current?.focus();
+            onFocus?.();
+          }}
+        >
+          {placeholder}
+        </Placeholder>
+      )}
       <Input
         ref={dayInputRef}
         name="day"
+        placeholder="DD"
         $hoverStyle={!!hoverDate}
         value={hoverDate ? hoverDate.dayOfMonth().toString().padStart(2, "0") : day}
         onChange={(e) => {
@@ -113,6 +131,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
       <Input
         ref={monthInputRef}
         name="month"
+        placeholder="MM"
         $hoverStyle={!!hoverDate}
         value={hoverDate ? hoverDate.monthValue().toString().padStart(2, "0") : month}
         onChange={(e) => {
@@ -140,6 +159,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
       <YearInput
         ref={yearInputRef}
         name="year"
+        placeholder="YYYY"
         $hoverStyle={!!hoverDate}
         value={hoverDate ? hoverDate.year() : year}
         onChange={(e) => {
@@ -186,15 +206,18 @@ const YearInput = styled.input<{ $hoverStyle?: boolean }>`
   ${(props) => props.$hoverStyle && "color: #888;"}
 `;
 
-const InputWrapper = styled.div<{ $focused: boolean }>`
-  border: 1px solid black;
-  border-radius: 3px;
+const InputWrapper = styled.div`
   display: flex;
-  width: fit-content;
+  width: 10rem;
   padding: 0.5rem 1rem;
+  position: relative;
+`;
 
-  ${(props) => props.$focused && "box-shadow: 0 0 1px 1px #fab;"}
-  :focus-within {
-    box-shadow: 0 0 1px 1px #fab;
-  }
+const Placeholder = styled.div`
+  color: #888;
+  position: absolute;
+  background-color: #fff;
+  left: 0;
+  right: 0;
+  margin: 0rem 1rem;
 `;
