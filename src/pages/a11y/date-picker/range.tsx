@@ -83,6 +83,7 @@ export default function RangeDatePickerPage() {
           ]}
         />
         <RangeDatePicker />
+        <RangeDatePicker withButtons />
         <RangeDatePicker disabled />
 
         <Type.H2 size="h300" mt="m" bold>

@@ -9,9 +9,10 @@ const INVALID_DATE = "invalid_date";
 
 interface RangeDatePickerProps {
   disabled?: boolean;
+  withButtons?: boolean;
 }
 
-export const RangeDatePicker = ({ disabled = false }: RangeDatePickerProps) => {
+export const RangeDatePicker = ({ disabled = false, withButtons = false }: RangeDatePickerProps) => {
   const [actualStartDate, setActualStartDate] = useState<LocalDate | null>(null);
   const [actualEndDate, setActualEndDate] = useState<LocalDate | null>(null);
   const [startDate, setStartDate] = useState<LocalDate | null>(null);
@@ -137,6 +138,7 @@ export const RangeDatePicker = ({ disabled = false }: RangeDatePickerProps) => {
           currentFocus={focus!}
           startDate={startDate}
           endDate={endDate}
+          withButtons={withButtons}
           onChange={(start, end) => {
             if (focus === "start") {
               setHasSelectedStart(true);
@@ -144,12 +146,18 @@ export const RangeDatePicker = ({ disabled = false }: RangeDatePickerProps) => {
                 setFocus("end");
               }
               setStartDate(start);
+              if (!withButtons) {
+                setActualStartDate(start);
+              }
             } else {
               setHasSelectedEnd(true);
               if (!(hasSelectedStartRef.current && hasSelectedEndRef.current)) {
                 setFocus("start");
               }
               setEndDate(end);
+              if (!withButtons) {
+                setActualEndDate(end);
+              }
             }
           }}
           onHover={(hover) => {
