@@ -1,7 +1,7 @@
 import { DateTimeFormatter, DayOfWeek, LocalDate } from "@js-joda/core";
 import { Locale } from "@js-joda/locale_en";
 import "@js-joda/timezone";
-import { useEffect, useImperativeHandle, useMemo, useState } from "react";
+import { useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useStateRef } from "./use-state-ref";
 import React from "react";
@@ -18,6 +18,7 @@ interface RangeCalendarProps {
 
 export interface CalendarRef {
   updateFocusedDate: (date: LocalDate) => void;
+  focus: () => void;
 }
 
 const isBetween = (val: LocalDate, start: LocalDate, end: LocalDate): boolean => {
@@ -32,6 +33,7 @@ const RangeCalendarComponent: React.ForwardRefRenderFunction<CalendarRef, RangeC
   const [selectedEndDate, setSelectedEndDate, selectedEndDateRef] = useStateRef<LocalDate | null>(endDate);
   const [focusedDate, setFocusedDate] = useState(LocalDate.now());
   const [hoveredDate, setHoveredDate] = useState<LocalDate | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const today = useMemo(() => LocalDate.now(), []);
 
   const days = useMemo(() => {
@@ -63,10 +65,64 @@ const RangeCalendarComponent: React.ForwardRefRenderFunction<CalendarRef, RangeC
         updateFocusedDate(date) {
           setFocusedDate(date);
         },
+        focus() {
+          (gridRef.current as any)?.focus?.();
+        },
       };
     },
     []
   );
+
+  const onKeyboardNavigation = (date: LocalDate) => {
+    setFocusedDate(date);
+    setHoveredDate(date);
+    onHover?.(date);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    switch (e.key) {
+      case "ArrowUp": {
+        e.preventDefault();
+        onKeyboardNavigation(focusedDate.minusDays(7));
+        break;
+      }
+      case "ArrowDown": {
+        e.preventDefault();
+        onKeyboardNavigation(focusedDate.plusDays(7));
+        break;
+      }
+      case "ArrowLeft": {
+        e.preventDefault();
+        onKeyboardNavigation(focusedDate.minusDays(1));
+        break;
+      }
+      case "ArrowRight": {
+        e.preventDefault();
+        onKeyboardNavigation(focusedDate.plusDays(1));
+        break;
+      }
+      case "Enter":
+      case " ": {
+        e.preventDefault();
+        const isBeforeStart =
+          currentFocus === "end" && !!selectedStartDate && !!selectedEndDate && focusedDate.isBefore(selectedStartDate);
+        const isAfterEnd =
+          currentFocus === "start" && !!selectedStartDate && !!selectedEndDate && focusedDate.isAfter(selectedEndDate);
+        const disabled = isBeforeStart || isAfterEnd;
+        if (disabled) {
+          return;
+        }
+        if (currentFocus === "start") {
+          setSelectedStartDate(focusedDate);
+        } else {
+          setSelectedEndDate(focusedDate);
+        }
+        setFocusedDate(focusedDate);
+        onChange?.(selectedStartDateRef.current, selectedEndDateRef.current);
+        break;
+      }
+    }
+  };
 
   return (
     <Wrapper>
@@ -91,64 +147,15 @@ const RangeCalendarComponent: React.ForwardRefRenderFunction<CalendarRef, RangeC
         </MonthButtonWrapper>
       </Header>
       <Grid
+        ref={gridRef}
+        tabIndex={-1}
         role="grid"
-        tabIndex={0}
         aria-activedescendant={focusedDate.toString()}
         onMouseLeave={() => {
           setHoveredDate(null);
           onHover?.(null);
         }}
-        onKeyDown={(e) => {
-          switch (e.key) {
-            case "ArrowUp": {
-              e.preventDefault();
-              setFocusedDate(focusedDate.minusDays(7));
-              break;
-            }
-            case "ArrowDown": {
-              e.preventDefault();
-              setFocusedDate(focusedDate.plusDays(7));
-              break;
-            }
-            case "ArrowLeft": {
-              e.preventDefault();
-              setFocusedDate(focusedDate.minusDays(1));
-              break;
-            }
-            case "ArrowRight": {
-              e.preventDefault();
-              setFocusedDate(focusedDate.plusDays(1));
-              break;
-            }
-            case "Enter":
-            case "Space": {
-              e.preventDefault();
-              const isBeforeStart =
-                currentFocus === "end" &&
-                !!selectedStartDate &&
-                !!selectedEndDate &&
-                focusedDate.isBefore(selectedStartDate);
-              const isAfterEnd =
-                currentFocus === "start" &&
-                !!selectedStartDate &&
-                !!selectedEndDate &&
-                focusedDate.isAfter(selectedEndDate);
-              const disabled = isBeforeStart || isAfterEnd;
-
-              if (disabled) {
-                return;
-              }
-              if (currentFocus === "start") {
-                setSelectedStartDate(focusedDate);
-              } else {
-                setSelectedEndDate(focusedDate);
-              }
-              setFocusedDate(focusedDate);
-              onChange?.(selectedStartDateRef.current, selectedEndDateRef.current);
-              break;
-            }
-          }
-        }}
+        onKeyDown={handleKeyPress}
       >
         {days[0].map((day) => {
           const dayName = day.format(DateTimeFormatter.ofPattern("eee").withLocale(Locale.ENGLISH));

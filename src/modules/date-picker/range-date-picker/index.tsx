@@ -56,6 +56,23 @@ export const RangeDatePicker = ({ disabled = false }: RangeDatePickerProps) => {
           setEndDate(actualEndDate);
         }
       }}
+      onKeyDown={(e) => {
+        switch (e.key) {
+          case "Escape":
+            if (wrapperRef.current?.contains(document.activeElement)) {
+              (document.activeElement as any).blur?.();
+            }
+            break;
+          case "ArrowDown":
+          case "ArrowUp":
+          case "ArrowLeft":
+          case "ArrowRight":
+            if (open) {
+              calendarRef.current?.focus();
+            }
+            break;
+        }
+      }}
     >
       <Picker>
         <DateInput

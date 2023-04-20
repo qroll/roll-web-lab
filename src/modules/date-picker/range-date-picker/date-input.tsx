@@ -52,21 +52,8 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
   }, [value]);
 
   useEffect(() => {
-    if (!focused && document.activeElement) {
-      if (
-        document.activeElement === dayInputRef.current ||
-        document.activeElement === monthInputRef.current ||
-        document.activeElement === yearInputRef.current
-      ) {
-        (document.activeElement as HTMLInputElement).blur();
-      }
-    }
     if (focused) {
-      if (
-        document.activeElement !== dayInputRef.current &&
-        document.activeElement !== monthInputRef.current &&
-        document.activeElement !== yearInputRef.current
-      ) {
+      if (!wrapperRef.current?.contains(document.activeElement)) {
         dayInputRef.current?.focus();
       }
     }
@@ -129,6 +116,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
         ref={dayInputRef}
         name="day"
         placeholder="DD"
+        autoComplete="off"
         disabled={disabled}
         $hoverStyle={hoverStyle}
         value={hoverDate ? hoverDate.dayOfMonth().toString().padStart(2, "0") : day}
@@ -152,6 +140,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
         ref={monthInputRef}
         name="month"
         placeholder="MM"
+        autoComplete="off"
         disabled={disabled}
         $hoverStyle={hoverStyle}
         value={hoverDate ? hoverDate.monthValue().toString().padStart(2, "0") : month}
@@ -181,6 +170,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
         ref={yearInputRef}
         name="year"
         placeholder="YYYY"
+        autoComplete="off"
         disabled={disabled}
         $hoverStyle={hoverStyle}
         value={hoverDate ? hoverDate.year() : year}
