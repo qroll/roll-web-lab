@@ -82,6 +82,7 @@ export const RangeDatePicker = ({ disabled = false }: RangeDatePickerProps) => {
           hoverDate={focus === "start" ? hoverDate : null}
           placeholder="From"
           disabled={disabled}
+          label="Start date"
           onFocus={() => {
             setFocus("start");
           }}
@@ -109,6 +110,7 @@ export const RangeDatePicker = ({ disabled = false }: RangeDatePickerProps) => {
           hoverDate={focus === "end" ? hoverDate : null}
           placeholder="To"
           disabled={disabled}
+          label="End date"
           onFocus={() => {
             setFocus("end");
           }}

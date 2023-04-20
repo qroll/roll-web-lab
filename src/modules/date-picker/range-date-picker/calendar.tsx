@@ -134,6 +134,7 @@ const RangeCalendarComponent: React.ForwardRefRenderFunction<CalendarRef, RangeC
             onClick={() => {
               setFocusedDate(focusedDate.minusMonths(1));
             }}
+            aria-label="Prev month"
           >
             &lt;
           </MonthButton>
@@ -141,6 +142,7 @@ const RangeCalendarComponent: React.ForwardRefRenderFunction<CalendarRef, RangeC
             onClick={() => {
               setFocusedDate(focusedDate.plusMonths(1));
             }}
+            aria-label="Next month"
           >
             &gt;
           </MonthButton>

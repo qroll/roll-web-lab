@@ -12,6 +12,7 @@ interface DateInputProps {
   hoverDate?: LocalDate | null;
   placeholder?: string;
   disabled?: boolean;
+  label?: string;
   onChange: (val: LocalDate | typeof INVALID_DATE) => void;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -24,7 +25,7 @@ export interface DateInputRef {
 }
 
 const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInputProps> = (
-  { focused, value, hoverDate, placeholder, disabled = false, onChange, onFocus, onBlur },
+  { focused, value, hoverDate, placeholder, disabled = false, label, onChange, onFocus, onBlur },
   ref
 ) => {
   const [day, setDay, dayRef] = useStateRef<string>("");
@@ -84,6 +85,8 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
 
   return (
     <InputWrapper
+      role="group"
+      aria-label={label}
       ref={wrapperRef}
       $focused={focused}
       onBlur={(e) => {
@@ -114,6 +117,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
       )}
       <Input
         ref={dayInputRef}
+        aria-label="day"
         name="day"
         placeholder="DD"
         autoComplete="off"
@@ -138,6 +142,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
       <>/</>
       <Input
         ref={monthInputRef}
+        aria-label="month"
         name="month"
         placeholder="MM"
         autoComplete="off"
@@ -168,6 +173,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
       <>/</>
       <YearInput
         ref={yearInputRef}
+        aria-label="year"
         name="year"
         placeholder="YYYY"
         autoComplete="off"
