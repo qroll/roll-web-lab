@@ -153,6 +153,7 @@ const RangeCalendarComponent: React.ForwardRefRenderFunction<CalendarRef, RangeC
         ref={gridRef}
         tabIndex={-1}
         role="grid"
+        aria-multiselectable
         aria-activedescendant={focusedDate.toString()}
         onMouseLeave={() => {
           setHoveredDate(null);
@@ -172,6 +173,13 @@ const RangeCalendarComponent: React.ForwardRefRenderFunction<CalendarRef, RangeC
               const isBeforeStart = currentFocus === "end" && !!selectedStartDate && day.isBefore(selectedStartDate);
               const isAfterEnd = currentFocus === "start" && !!selectedEndDate && day.isAfter(selectedEndDate);
               const disabled = isBeforeStart || isAfterEnd;
+              const selected =
+                day.equals(selectedStartDate) ||
+                day.equals(selectedEndDate) ||
+                (!!selectedStartDate &&
+                  !!selectedEndDate &&
+                  day.isAfter(selectedStartDate) &&
+                  day.isBefore(selectedEndDate));
               const hoverAfterStart = !!hoveredDate && !!selectedStartDate && hoveredDate.isAfter(selectedStartDate);
               const hoverBeforeEnd = !!hoveredDate && !!selectedEndDate && hoveredDate.isBefore(selectedEndDate);
               const hovered =
@@ -182,20 +190,10 @@ const RangeCalendarComponent: React.ForwardRefRenderFunction<CalendarRef, RangeC
                 <Cell
                   role="gridcell"
                   key={date}
-                  id={date}
-                  aria-selected={
-                    day.equals(selectedStartDate) ||
-                    day.equals(selectedEndDate) ||
-                    (!!selectedStartDate &&
-                      !!selectedEndDate &&
-                      day.isAfter(selectedStartDate) &&
-                      day.isBefore(selectedEndDate))
-                  }
                   $focused={day.equals(focusedDate)}
                   $hovered={day.equals(hoveredDate) || hovered}
                   $disabled={disabled}
-                  aria-current={day.equals(today) ? "date" : undefined}
-                  aria-label={label}
+                  $selected={selected}
                   onMouseOver={() => {
                     if (!disabled) {
                       setHoveredDate(day);
@@ -218,7 +216,16 @@ const RangeCalendarComponent: React.ForwardRefRenderFunction<CalendarRef, RangeC
                     onChange?.(selectedStartDateRef.current, selectedEndDateRef.current);
                   }}
                 >
-                  {day.dayOfMonth()}
+                  <button
+                    id={date}
+                    tabIndex={-1}
+                    disabled={disabled}
+                    aria-current={day.equals(today) ? "date" : undefined}
+                    aria-label={label}
+                    aria-selected={selected}
+                  >
+                    {day.dayOfMonth()}
+                  </button>
                 </Cell>
               );
             })}
@@ -260,7 +267,7 @@ const HeaderCell = styled.div`
   font-size: 0.8rem;
 `;
 
-const Cell = styled.div<{ $focused?: boolean; $hovered?: boolean; $disabled?: boolean }>`
+const Cell = styled.div<{ $focused?: boolean; $hovered?: boolean; $disabled?: boolean; $selected?: boolean }>`
   height: 2.5rem;
   width: 2.5rem;
   padding: 0.5rem;
@@ -291,7 +298,7 @@ const Cell = styled.div<{ $focused?: boolean; $hovered?: boolean; $disabled?: bo
   `}
 
   ${(props) =>
-    props["aria-selected"] &&
+    props.$selected &&
     `
     background: rgba(255,170,187, 0.2);
   `};
