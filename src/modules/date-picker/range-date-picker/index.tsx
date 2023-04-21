@@ -39,6 +39,9 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
       ref={wrapperRef}
       tabIndex={disabled ? undefined : -1}
       onFocus={(e) => {
+        if (open) {
+          return;
+        }
         if (e.target === wrapperRef.current) {
           setFocus("start");
         }
@@ -53,8 +56,13 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
         if (!wrapperRef.current?.contains(e.relatedTarget)) {
           setOpen(false);
           setFocus(null);
-          setStartDate(actualStartDate);
-          setEndDate(actualEndDate);
+          if (withButtons) {
+            setStartDate(actualStartDate);
+            setEndDate(actualEndDate);
+          } else {
+            setActualStartDate(startDate);
+            setActualEndDate(endDate);
+          }
         }
       }}
       onKeyDown={(e) => {
@@ -62,14 +70,6 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
           case "Escape":
             if (wrapperRef.current?.contains(document.activeElement)) {
               (document.activeElement as any).blur?.();
-            }
-            break;
-          case "ArrowDown":
-          case "ArrowUp":
-          case "ArrowLeft":
-          case "ArrowRight":
-            if (open) {
-              calendarRef.current?.focus();
             }
             break;
         }
@@ -91,16 +91,23 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
             if (val === INVALID_DATE) {
               startDateInputRef.current?.setValue(startDate);
             } else {
+              if (!startDate || !val.isEqual(startDate)) {
+                setHasSelectedStart(true);
+              }
               setStartDate(val);
-              setHasSelectedStart(true);
               if (endDate && val.isAfter(endDate)) {
                 setEndDate(null);
               }
-              if (!(hasSelectedStartRef.current && hasSelectedEndRef.current)) {
-                setFocus("end");
-              }
               calendarRef.current?.updateFocusedDate(val);
             }
+          }}
+          onYearBlur={() => {
+            if (!(hasSelectedStartRef.current && hasSelectedEndRef.current)) {
+              setFocus("end");
+            }
+          }}
+          onArrow={() => {
+            calendarRef.current?.focus();
           }}
         />
         <Separator>→</Separator>
@@ -119,16 +126,23 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
             if (val === INVALID_DATE) {
               endDateInputRef.current?.setValue(endDate);
             } else {
+              if (!endDate || !val.isEqual(endDate)) {
+                setHasSelectedEnd(true);
+              }
               setEndDate(val);
-              setHasSelectedEnd(true);
               if (startDate && val.isBefore(startDate)) {
                 setStartDate(null);
               }
-              if (!(hasSelectedStartRef.current && hasSelectedEndRef.current)) {
-                setFocus("start");
-              }
               calendarRef.current?.updateFocusedDate(val);
             }
+          }}
+          onYearBlur={() => {
+            if (!(hasSelectedStartRef.current && hasSelectedEndRef.current)) {
+              setFocus("start");
+            }
+          }}
+          onArrow={() => {
+            calendarRef.current?.focus();
           }}
         />
       </Picker>
@@ -150,7 +164,7 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
               if (!withButtons) {
                 setActualStartDate(start);
               }
-            } else {
+            } else if (focus === "end") {
               setHasSelectedEnd(true);
               if (!(hasSelectedStartRef.current && hasSelectedEndRef.current)) {
                 setFocus("start");
@@ -167,6 +181,8 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
           onCancel={() => {
             setStartDate(actualStartDate);
             setEndDate(actualEndDate);
+            setOpen(false);
+            setFocus(null);
           }}
           onConfirm={() => {
             setActualStartDate(startDate);

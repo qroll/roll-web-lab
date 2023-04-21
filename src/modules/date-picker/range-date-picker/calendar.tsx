@@ -110,7 +110,7 @@ const RangeCalendarComponent: React.ForwardRefRenderFunction<CalendarRef, RangeC
           currentFocus === "end" && !!selectedStartDate && !!selectedEndDate && focusedDate.isBefore(selectedStartDate);
         const isAfterEnd =
           currentFocus === "start" && !!selectedStartDate && !!selectedEndDate && focusedDate.isAfter(selectedEndDate);
-        const disabled = isBeforeStart || isAfterEnd;
+        const disabled = !selectAny && (isBeforeStart || isAfterEnd);
         if (disabled) {
           return;
         }
@@ -217,16 +217,17 @@ const RangeCalendarComponent: React.ForwardRefRenderFunction<CalendarRef, RangeC
                     onChange?.(selectedStartDateRef.current, selectedEndDateRef.current);
                   }}
                 >
-                  <button
+                  <div
                     id={date}
                     tabIndex={-1}
-                    disabled={disabled}
+                    role="button"
+                    aria-disabled={disabled}
                     aria-current={day.equals(today) ? "date" : undefined}
                     aria-label={label}
                     aria-selected={selected}
                   >
                     {day.dayOfMonth()}
-                  </button>
+                  </div>
                 </Cell>
               );
             })}

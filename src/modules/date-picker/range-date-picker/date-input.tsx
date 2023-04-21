@@ -15,7 +15,8 @@ interface DateInputProps {
   label?: string;
   onChange: (val: LocalDate | typeof INVALID_DATE) => void;
   onFocus?: () => void;
-  onBlur?: () => void;
+  onArrow?: () => void;
+  onYearBlur?: () => void;
 }
 
 export interface DateInputRef {
@@ -25,7 +26,7 @@ export interface DateInputRef {
 }
 
 const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInputProps> = (
-  { focused, value, hoverDate, placeholder, disabled = false, label, onChange, onFocus, onBlur },
+  { focused, value, hoverDate, placeholder, disabled = false, label, onChange, onFocus, onArrow, onYearBlur },
   ref
 ) => {
   const [day, setDay, dayRef] = useStateRef<string>("");
@@ -89,19 +90,16 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
       aria-label={label}
       ref={wrapperRef}
       $focused={focused}
-      onBlur={(e) => {
-        if (!wrapperRef.current?.contains(e.relatedTarget)) {
-          try {
-            const date = LocalDate.of(parseInt(year), parseInt(month), parseInt(day));
-            onChange(date);
-          } catch (err) {
-            onChange(INVALID_DATE);
-          }
-        }
-        onBlur?.();
-      }}
       onFocus={() => {
         onFocus?.();
+      }}
+      onKeyDown={(e) => {
+        switch (e.key) {
+          case "ArrowDown":
+          case "ArrowUp":
+            onArrow?.();
+            break;
+        }
       }}
     >
       {!focused && !value && !hoverDate && (
@@ -187,6 +185,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
             try {
               const date = LocalDate.of(parseInt(value), parseInt(month), parseInt(day));
               onChange(date);
+              onYearBlur?.();
             } catch (err) {}
           }
         }}
