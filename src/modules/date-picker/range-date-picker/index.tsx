@@ -20,8 +20,8 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
   const [hoverDate, setHoverDate] = useState<LocalDate | null>(null);
   const [focus, setFocus, focusRef] = useStateRef<"start" | "end" | null>(null);
   const [open, setOpen] = useState(false);
-  const [, setHasSelectedStart, hasSelectedStartRef] = useStateRef(false);
-  const [, setHasSelectedEnd, hasSelectedEndRef] = useStateRef(false);
+  const [hasSelectedStart, setHasSelectedStart, hasSelectedStartRef] = useStateRef(false);
+  const [hasSelectedEnd, setHasSelectedEnd, hasSelectedEndRef] = useStateRef(false);
   const startDateInputRef = useRef<DateInputRef>(null);
   const endDateInputRef = useRef<DateInputRef>(null);
   const calendarRef = useRef<CalendarRef>(null);
@@ -139,6 +139,7 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
           startDate={startDate}
           endDate={endDate}
           withButtons={withButtons}
+          selectAny={!hasSelectedStart && !hasSelectedEnd}
           onChange={(start, end) => {
             if (focus === "start") {
               setHasSelectedStart(true);

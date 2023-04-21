@@ -11,6 +11,7 @@ interface RangeCalendarProps {
   startDate: LocalDate | null;
   endDate: LocalDate | null;
   withButtons?: boolean;
+  selectAny?: boolean;
   onChange?: (start: LocalDate | null, end: LocalDate | null) => void;
   onHover?: (hover: LocalDate | null) => void;
   onCancel?: () => void;
@@ -27,7 +28,7 @@ const isBetween = (val: LocalDate, start: LocalDate, end: LocalDate): boolean =>
 };
 
 const RangeCalendarComponent: React.ForwardRefRenderFunction<CalendarRef, RangeCalendarProps> = (
-  { currentFocus, startDate, endDate, withButtons = false, onChange, onHover, onCancel, onConfirm },
+  { currentFocus, startDate, endDate, withButtons = false, selectAny = false, onChange, onHover, onCancel, onConfirm },
   ref
 ) => {
   const [selectedStartDate, setSelectedStartDate, selectedStartDateRef] = useStateRef<LocalDate | null>(startDate);
@@ -172,7 +173,7 @@ const RangeCalendarComponent: React.ForwardRefRenderFunction<CalendarRef, RangeC
               const label = day.format(DateTimeFormatter.ofPattern("d MMMM uuuu").withLocale(Locale.ENGLISH));
               const isBeforeStart = currentFocus === "end" && !!selectedStartDate && day.isBefore(selectedStartDate);
               const isAfterEnd = currentFocus === "start" && !!selectedEndDate && day.isAfter(selectedEndDate);
-              const disabled = isBeforeStart || isAfterEnd;
+              const disabled = !selectAny && (isBeforeStart || isAfterEnd);
               const selected =
                 day.equals(selectedStartDate) ||
                 day.equals(selectedEndDate) ||
