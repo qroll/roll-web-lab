@@ -1,9 +1,9 @@
 import { LocalDate } from "@js-joda/core";
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import { useStateRef } from "../../../components/hooks";
 import { CalendarRef, RangeCalendar } from "./calendar";
 import { DateInput, DateInputRef } from "./date-input";
-import { useStateRef } from "./use-state-ref";
 
 const INVALID_DATE = "invalid_date";
 
