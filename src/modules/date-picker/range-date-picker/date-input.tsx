@@ -105,6 +105,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
       {!focused && !value && !hoverDate && (
         <Placeholder
           tabIndex={disabled ? undefined : 0}
+          $disabled={disabled}
           onFocus={() => {
             dayInputRef.current?.focus();
             onFocus?.();
@@ -231,10 +232,10 @@ const InputWrapper = styled.div<{ $focused?: boolean }>`
   ${(props) => props.$focused && "border-bottom: 2px solid #fab;"}
 `;
 
-const Placeholder = styled.div`
+const Placeholder = styled.div<{ $disabled?: boolean }>`
   color: #888;
   position: absolute;
-  background-color: #fff;
+  background-color: ${(props) => (props.$disabled ? "#eee" : "#fff")};
   left: 0;
   right: 0;
   margin: 0rem 1rem;

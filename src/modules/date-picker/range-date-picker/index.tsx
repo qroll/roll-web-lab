@@ -38,6 +38,7 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
     <Wrapper
       ref={wrapperRef}
       tabIndex={disabled ? undefined : -1}
+      $disabled={disabled}
       onFocus={(e) => {
         if (open) {
           return;
@@ -196,14 +197,14 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
   );
 };
 
-const Wrapper = styled.div<{ $focused?: boolean }>`
+const Wrapper = styled.div<{ $focused?: boolean; $disabled?: boolean }>`
   width: fit-content;
   position: relative;
   border: 1px solid black;
   border-radius: 3px;
   display: flex;
   align-items: center;
-  background-color: #fff;
+  background-color: ${(props) => (props.$disabled ? "#eee" : "#fff")};
 
   ${(props) => props.$focused && "box-shadow: 0 0 1px 1px #fab;"}
   :focus-within {
