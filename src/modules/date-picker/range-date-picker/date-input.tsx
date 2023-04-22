@@ -38,10 +38,10 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
   const yearInputRef = useRef<HTMLInputElement>(null);
 
   const updateStateFromValue = (val: LocalDate | null) => {
-    if (value) {
-      setDay(value.dayOfMonth().toString().padStart(2, "0"));
-      setMonth(value.monthValue().toString().padStart(2, "0"));
-      setYear(value.year().toString());
+    if (val) {
+      setDay(val.dayOfMonth().toString().padStart(2, "0"));
+      setMonth(val.monthValue().toString().padStart(2, "0"));
+      setYear(val.year().toString());
     } else {
       setDay("");
       setMonth("");
