@@ -8,7 +8,8 @@ export default function RangeDatePickerPage() {
     <Page>
       <PageContent>
         <Type.Text>
-          Using <code>grid</code> role is suitable here because a calendar is two-dimensional and is interactive
+          A date range picker composed of multiple inputs — start and end date fields for keyboard input and a calendar
+          widget for visual selection
         </Type.Text>
         <Type.H2 size="h300" mt="m" bold>
           WAI-ARIA checklist
@@ -17,9 +18,15 @@ export default function RangeDatePickerPage() {
           items={[
             {
               checked: true,
+              label: "`group` role",
+              mandatory: true,
+              remark: "Groups related inputs together; in this case, the day, month and year fields",
+            },
+            {
+              checked: true,
               label: "`grid` role",
               mandatory: true,
-              remark: "Set on the widget",
+              remark: "Set on the calendar widget",
             },
             {
               checked: true,
@@ -33,6 +40,12 @@ export default function RangeDatePickerPage() {
               mandatory: true,
               remark: "Set on a cell",
             },
+            {
+              checked: true,
+              label: "`button` role",
+              mandatory: true,
+              remark: "Set on a child in the gridcell to indicate interactivity",
+            },
           ]}
         />
         <Type.H3 size="h200" mt="xs" bold>
@@ -42,9 +55,9 @@ export default function RangeDatePickerPage() {
           items={[
             {
               checked: true,
-              label: "`aria-current`",
+              label: "`aria-current=date`",
               mandatory: true,
-              remark: "Set on the element that represents the current value.",
+              remark: "Set on the element that represents the current date.",
             },
             {
               checked: true,
@@ -55,17 +68,13 @@ export default function RangeDatePickerPage() {
             {
               checked: true,
               label: "`aria-multiselectable`",
+              mandatory: true,
               remark: "Specifies if more than one item can be selected",
-            },
-            {
-              checked: true,
-              label: "`aria-readonly`",
-              remark: "Specifies if the element is not editable (but still operable)",
             },
           ]}
         />
         <Type.H3 size="h200" mt="xs" bold>
-          gridcell
+          gridcell button
         </Type.H3>
         <Checklist
           items={[
@@ -73,7 +82,7 @@ export default function RangeDatePickerPage() {
               checked: true,
               label: "`aria-selected`",
               mandatory: true,
-              remark: "Set on selectable items",
+              remark: "Set on selected items",
             },
             {
               checked: true,

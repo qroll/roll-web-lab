@@ -22,6 +22,8 @@ const Home: NextPage = () => {
           items={[
             { label: "Checkbox", href: "/a11y/checkbox" },
             { label: "Combobox", href: "/a11y/combobox/simple" },
+            { label: "Calendar", href: "/a11y/date-picker/simple" },
+            { label: "Date range picker", href: "/a11y/date-picker/range" },
           ]}
         />
       </PageContent>
