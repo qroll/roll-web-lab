@@ -2,13 +2,17 @@ import { ReactNode } from "react";
 import styled from "styled-components";
 import { Type } from "../../components/typography/type";
 
-interface TableProps<T extends Record<string, string | ReactNode>> {
-  headers: (keyof T)[];
+interface TableProps<T extends Record<K, ReactNode>, K extends string> {
+  headers: K[];
   rows: T[];
   keyExtractor: (row: T) => string;
 }
 
-export const Table = <T,>({ headers, rows, keyExtractor }: TableProps<T>) => {
+export const Table = <T extends Record<K, ReactNode>, K extends string>({
+  headers,
+  rows,
+  keyExtractor,
+}: TableProps<T, K>) => {
   return (
     <StyledTable>
       <thead>
