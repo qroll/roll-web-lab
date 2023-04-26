@@ -57,7 +57,7 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
         if (!wrapperRef.current?.contains(e.relatedTarget)) {
           setOpen(false);
           setFocus(null);
-          if (withButtons) {
+          if (withButtons || !startDate || !endDate) {
             setStartDate(actualStartDate);
             setEndDate(actualEndDate);
           } else {
@@ -162,18 +162,12 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
                 setFocus("end");
               }
               setStartDate(start);
-              if (!withButtons) {
-                setActualStartDate(start);
-              }
             } else if (focus === "end") {
               setHasSelectedEnd(true);
               if (!(hasSelectedStartRef.current && hasSelectedEndRef.current)) {
                 setFocus("start");
               }
               setEndDate(end);
-              if (!withButtons) {
-                setActualEndDate(end);
-              }
             }
           }}
           onHover={(hover) => {
