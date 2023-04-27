@@ -1,22 +1,25 @@
-import { LocalDate } from "@js-joda/core";
+import { DateTimeFormatter, LocalDate } from "@js-joda/core";
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useStateRef } from "../../../components/hooks";
 import { CalendarRef, RangeCalendar } from "./calendar";
 import { DateInput, DateInputRef } from "./date-input";
+import { Locale } from "@js-joda/locale_en";
 
 const INVALID_DATE = "invalid_date";
+type InvalidDate = typeof INVALID_DATE;
 
 interface RangeDatePickerProps {
   disabled?: boolean;
   withButtons?: boolean;
+  onChange?: (s: string | null, e: string | null) => void;
 }
 
-export const RangeDatePicker = ({ disabled = false, withButtons = false }: RangeDatePickerProps) => {
+export const RangeDatePicker = ({ disabled = false, withButtons = false, onChange }: RangeDatePickerProps) => {
   const [actualStartDate, setActualStartDate] = useState<LocalDate | null>(null);
   const [actualEndDate, setActualEndDate] = useState<LocalDate | null>(null);
-  const [startDate, setStartDate] = useState<LocalDate | null>(null);
-  const [endDate, setEndDate] = useState<LocalDate | null>(null);
+  const [startDate, setStartDate, startDateRef] = useStateRef<LocalDate | null>(null);
+  const [endDate, setEndDate, endDateRef] = useStateRef<LocalDate | null>(null);
   const [hoverDate, setHoverDate] = useState<LocalDate | null>(null);
   const [focus, setFocus, focusRef] = useStateRef<"start" | "end" | null>(null);
   const [open, setOpen] = useState(false);
@@ -33,6 +36,13 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
       setHasSelectedEnd(false);
     }
   }, [open]);
+
+  const performOnChangeHandler = (start: LocalDate | null | string, end: LocalDate | null | string) => {
+    const formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd").withLocale(Locale.ENGLISH);
+    const startStr = !start ? null : typeof start === "string" ? start : start.format(formatter);
+    const endStr = !end ? null : typeof end === "string" ? end : end.format(formatter);
+    onChange?.(startStr, endStr);
+  };
 
   return (
     <Wrapper
@@ -60,9 +70,11 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
           if (withButtons || !startDate || !endDate) {
             setStartDate(actualStartDate);
             setEndDate(actualEndDate);
+            performOnChangeHandler(actualStartDate, actualEndDate);
           } else {
             setActualStartDate(startDate);
             setActualEndDate(endDate);
+            performOnChangeHandler(startDate, endDate);
           }
         }
       }}
@@ -91,6 +103,7 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
           onChange={(val) => {
             if (val === INVALID_DATE) {
               startDateInputRef.current?.setValue(startDate);
+              performOnChangeHandler(INVALID_DATE, endDateRef.current);
             } else {
               if (!startDate || !val.isEqual(startDate)) {
                 setHasSelectedStart(true);
@@ -100,6 +113,7 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
                 setEndDate(null);
               }
               calendarRef.current?.updateFocusedDate(val);
+              performOnChangeHandler(val, endDateRef.current);
             }
           }}
           onYearBlur={() => {
@@ -126,6 +140,7 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
           onChange={(val) => {
             if (val === INVALID_DATE) {
               endDateInputRef.current?.setValue(endDate);
+              performOnChangeHandler(startDate, INVALID_DATE);
             } else {
               if (!endDate || !val.isEqual(endDate)) {
                 setHasSelectedEnd(true);
@@ -135,6 +150,7 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false }: Range
                 setStartDate(null);
               }
               calendarRef.current?.updateFocusedDate(val);
+              performOnChangeHandler(startDateRef.current, val);
             }
           }}
           onYearBlur={() => {

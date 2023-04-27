@@ -91,7 +91,7 @@ export default function RangeDatePickerPage() {
             },
           ]}
         />
-        <RangeDatePicker />
+        <RangeDatePicker onChange={(s, e) => console.log(s, e)} />
         <RangeDatePicker withButtons />
         <RangeDatePicker disabled />
 
