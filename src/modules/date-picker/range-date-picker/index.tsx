@@ -9,17 +9,27 @@ import { Locale } from "@js-joda/locale_en";
 const INVALID_DATE = "invalid_date";
 type InvalidDate = typeof INVALID_DATE;
 
+const formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd").withLocale(Locale.ENGLISH);
+
 interface RangeDatePickerProps {
+  start?: string;
+  end?: string;
   disabled?: boolean;
   withButtons?: boolean;
-  onChange?: (s: string | null, e: string | null) => void;
+  onChange?: (s: string, e: string) => void;
 }
 
-export const RangeDatePicker = ({ disabled = false, withButtons = false, onChange }: RangeDatePickerProps) => {
+export const RangeDatePicker = ({
+  start,
+  end,
+  disabled = false,
+  withButtons = false,
+  onChange,
+}: RangeDatePickerProps) => {
   const [actualStartDate, setActualStartDate] = useState<LocalDate | null>(null);
   const [actualEndDate, setActualEndDate] = useState<LocalDate | null>(null);
-  const [startDate, setStartDate, startDateRef] = useStateRef<LocalDate | null>(null);
-  const [endDate, setEndDate, endDateRef] = useStateRef<LocalDate | null>(null);
+  const [startDate, setStartDate, startDateRef] = useStateRef<LocalDate | InvalidDate | null>(null);
+  const [endDate, setEndDate, endDateRef] = useStateRef<LocalDate | InvalidDate | null>(null);
   const [hoverDate, setHoverDate] = useState<LocalDate | null>(null);
   const [focus, setFocus, focusRef] = useStateRef<"start" | "end" | null>(null);
   const [open, setOpen] = useState(false);
@@ -31,6 +41,46 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false, onChang
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (start === startDate) {
+      return;
+    }
+    if (start === INVALID_DATE) {
+      setStartDate(null);
+    } else if (start) {
+      const val = LocalDate.parse(start);
+      if (!startDate || startDate === INVALID_DATE || !val.isEqual(startDate)) {
+        setStartDate(val);
+        if (withButtons) {
+          setActualStartDate(val);
+        }
+      }
+    } else {
+      setStartDate(null);
+    }
+  }, [start]);
+
+  useEffect(() => {
+    if (end === endDate) {
+      return;
+    }
+    if (end === INVALID_DATE) {
+      setEndDate(null);
+    } else if (end) {
+      const val = LocalDate.parse(end);
+      if (!endDate || endDate === INVALID_DATE || !val.isEqual(endDate)) {
+        setEndDate(val);
+        if (withButtons) {
+          setActualEndDate(val);
+        }
+      }
+    } else {
+      setEndDate(null);
+    }
+  }, [end]);
+
+  useEffect(() => {}, [end]);
+
+  useEffect(() => {
     if (open) {
       setHasSelectedStart(false);
       setHasSelectedEnd(false);
@@ -38,9 +88,8 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false, onChang
   }, [open]);
 
   const performOnChangeHandler = (start: LocalDate | null | string, end: LocalDate | null | string) => {
-    const formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd").withLocale(Locale.ENGLISH);
-    const startStr = !start ? null : typeof start === "string" ? start : start.format(formatter);
-    const endStr = !end ? null : typeof end === "string" ? end : end.format(formatter);
+    const startStr = typeof start === "string" ? start : !start ? "" : start.format(formatter);
+    const endStr = typeof end === "string" ? end : !end ? "" : end.format(formatter);
     onChange?.(startStr, endStr);
   };
 
@@ -56,9 +105,9 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false, onChang
         if (e.target === wrapperRef.current) {
           setFocus("start");
         }
-        if (startDateInputRef.current?.ref.current?.contains(e.target) && startDate) {
+        if (startDateInputRef.current?.ref.current?.contains(e.target) && startDate && startDate !== INVALID_DATE) {
           calendarRef.current?.updateFocusedDate(startDate);
-        } else if (endDateInputRef.current?.ref.current?.contains(e.target) && endDate) {
+        } else if (endDateInputRef.current?.ref.current?.contains(e.target) && endDate && endDate !== INVALID_DATE) {
           calendarRef.current?.updateFocusedDate(endDate);
         }
         setOpen(true);
@@ -67,7 +116,7 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false, onChang
         if (!wrapperRef.current?.contains(e.relatedTarget)) {
           setOpen(false);
           setFocus(null);
-          if (withButtons || !startDate || !endDate) {
+          if (withButtons || !startDate || !endDate || startDate === INVALID_DATE || endDate === INVALID_DATE) {
             setStartDate(actualStartDate);
             setEndDate(actualEndDate);
             performOnChangeHandler(actualStartDate, actualEndDate);
@@ -77,6 +126,14 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false, onChang
             performOnChangeHandler(startDate, endDate);
           }
         }
+        // if (
+        //   startDateInputRef.current?.ref.current?.contains(e.target) &&
+        //   endDateInputRef.current?.ref.current?.contains(e.relatedTarget)
+        // ) {
+        //   if (startDate === INVALID_DATE && actualStartDate) {
+        //     calendarRef.current?.updateFocusedDate(actualStartDate);
+        //   }
+        // }
       }}
       onKeyDown={(e) => {
         switch (e.key) {
@@ -101,19 +158,44 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false, onChang
             setFocus("start");
           }}
           onChange={(val) => {
-            if (val === INVALID_DATE) {
-              startDateInputRef.current?.setValue(startDate);
-              performOnChangeHandler(INVALID_DATE, endDateRef.current);
+            // if (val === INVALID_DATE) {
+            //   startDateInputRef.current?.setValue(startDate);
+            //   performOnChangeHandler(INVALID_DATE, endDateRef.current);
+            // } else {
+            //   if (!startDate || !val.isEqual(startDate)) {
+            //     setHasSelectedStart(true);
+            //   }
+            //   setStartDate(val);
+            //   if (endDate && val.isAfter(endDate)) {
+            //     setEndDate(null);
+            //   }
+            //   calendarRef.current?.updateFocusedDate(val);
+            //   performOnChangeHandler(val, endDateRef.current);
+            // }
+          }}
+          onChangeRaw={(d, m, y) => {
+            if (d && m && y.length === 4) {
+              try {
+                const val = LocalDate.of(parseInt(y), parseInt(m), parseInt(d));
+                if (!startDate || startDate === INVALID_DATE || !val.isEqual(startDate)) {
+                  setHasSelectedStart(true);
+                }
+                setStartDate(val);
+                if (endDate && endDate !== INVALID_DATE && val.isAfter(endDate)) {
+                  setEndDate(null);
+                }
+                calendarRef.current?.updateFocusedDate(val);
+                performOnChangeHandler(val, endDate);
+              } catch (err) {
+                setStartDate(INVALID_DATE);
+                performOnChangeHandler(INVALID_DATE, endDate);
+              }
+            } else if (!d && !m && !y) {
+              setStartDate(INVALID_DATE);
+              performOnChangeHandler("", endDate);
             } else {
-              if (!startDate || !val.isEqual(startDate)) {
-                setHasSelectedStart(true);
-              }
-              setStartDate(val);
-              if (endDate && val.isAfter(endDate)) {
-                setEndDate(null);
-              }
-              calendarRef.current?.updateFocusedDate(val);
-              performOnChangeHandler(val, endDateRef.current);
+              setStartDate(INVALID_DATE);
+              performOnChangeHandler(INVALID_DATE, endDate);
             }
           }}
           onYearBlur={() => {
@@ -138,19 +220,44 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false, onChang
             setFocus("end");
           }}
           onChange={(val) => {
-            if (val === INVALID_DATE) {
-              endDateInputRef.current?.setValue(endDate);
-              performOnChangeHandler(startDate, INVALID_DATE);
+            // if (val === INVALID_DATE) {
+            //   endDateInputRef.current?.setValue(endDate);
+            //   performOnChangeHandler(startDate, INVALID_DATE);
+            // } else {
+            //   if (!endDate || !val.isEqual(endDate)) {
+            //     setHasSelectedEnd(true);
+            //   }
+            //   setEndDate(val);
+            //   if (startDate && val.isBefore(startDate)) {
+            //     setStartDate(null);
+            //   }
+            //   calendarRef.current?.updateFocusedDate(val);
+            //   performOnChangeHandler(startDateRef.current, val);
+            // }
+          }}
+          onChangeRaw={(d, m, y) => {
+            if (d && m && y.length === 4) {
+              try {
+                const val = LocalDate.of(parseInt(y), parseInt(m), parseInt(d));
+                if (!endDate || endDate === INVALID_DATE || !val.isEqual(endDate)) {
+                  setHasSelectedEnd(true);
+                }
+                setEndDate(val);
+                if (startDate && startDate !== INVALID_DATE && val.isBefore(startDate)) {
+                  setStartDate(null);
+                }
+                calendarRef.current?.updateFocusedDate(val);
+                performOnChangeHandler(startDate, val);
+              } catch (err) {
+                setEndDate(INVALID_DATE);
+                performOnChangeHandler(startDate, INVALID_DATE);
+              }
+            } else if (!d && !m && !y) {
+              setEndDate(INVALID_DATE);
+              performOnChangeHandler(startDate, "");
             } else {
-              if (!endDate || !val.isEqual(endDate)) {
-                setHasSelectedEnd(true);
-              }
-              setEndDate(val);
-              if (startDate && val.isBefore(startDate)) {
-                setStartDate(null);
-              }
-              calendarRef.current?.updateFocusedDate(val);
-              performOnChangeHandler(startDateRef.current, val);
+              setEndDate(INVALID_DATE);
+              performOnChangeHandler(startDate, INVALID_DATE);
             }
           }}
           onYearBlur={() => {
@@ -196,8 +303,12 @@ export const RangeDatePicker = ({ disabled = false, withButtons = false, onChang
             setFocus(null);
           }}
           onConfirm={() => {
-            setActualStartDate(startDate);
-            setActualEndDate(endDate);
+            if (startDate !== INVALID_DATE) {
+              setActualStartDate(startDate);
+            }
+            if (endDate !== INVALID_DATE) {
+              setActualEndDate(endDate);
+            }
             setOpen(false);
             setFocus(null);
           }}

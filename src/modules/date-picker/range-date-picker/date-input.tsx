@@ -5,15 +5,17 @@ import styled from "styled-components";
 import { useStateRef } from "../../../components/hooks";
 
 const INVALID_DATE = "invalid_date";
+type InvalidDate = typeof INVALID_DATE;
 
 interface DateInputProps {
   focused: boolean;
-  value: LocalDate | null;
+  value: LocalDate | InvalidDate | null;
   hoverDate?: LocalDate | null;
   placeholder?: string;
   disabled?: boolean;
   label?: string;
   onChange: (val: LocalDate | typeof INVALID_DATE) => void;
+  onChangeRaw: (d: string, m: string, y: string) => void;
   onFocus?: () => void;
   onArrow?: () => void;
   onYearBlur?: () => void;
@@ -26,7 +28,19 @@ export interface DateInputRef {
 }
 
 const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInputProps> = (
-  { focused, value, hoverDate, placeholder, disabled = false, label, onChange, onFocus, onArrow, onYearBlur },
+  {
+    focused,
+    value,
+    hoverDate,
+    placeholder,
+    disabled = false,
+    label,
+    onChange,
+    onChangeRaw,
+    onFocus,
+    onArrow,
+    onYearBlur,
+  },
   ref
 ) => {
   const [day, setDay, dayRef] = useStateRef<string>("");
@@ -39,8 +53,12 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
 
   const updateStateFromValue = (val: LocalDate | null) => {
     if (val) {
-      setDay(val.dayOfMonth().toString().padStart(2, "0"));
-      setMonth(val.monthValue().toString().padStart(2, "0"));
+      if (parseInt(day) !== val.dayOfMonth()) {
+        setDay(val.dayOfMonth().toString().padStart(2, "0"));
+      }
+      if (parseInt(month) !== val.monthValue()) {
+        setMonth(val.monthValue().toString().padStart(2, "0"));
+      }
       setYear(val.year().toString());
     } else {
       setDay("");
@@ -50,7 +68,9 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
   };
 
   useEffect(() => {
-    updateStateFromValue(value);
+    if (value !== INVALID_DATE) {
+      updateStateFromValue(value);
+    }
   }, [value]);
 
   useEffect(() => {
@@ -129,6 +149,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
           if (value.length === 2) {
             monthInputRef.current?.select();
           }
+          onChangeRaw?.(value, month, year);
         }}
         maxLength={2}
         onBlur={() => {
@@ -154,6 +175,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
           if (value.length === 2) {
             yearInputRef.current?.select();
           }
+          onChangeRaw?.(day, value, year);
         }}
         maxLength={2}
         onBlur={() => {
@@ -189,6 +211,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
               onYearBlur?.();
             } catch (err) {}
           }
+          onChangeRaw?.(day, month, value);
         }}
         maxLength={4}
         onKeyDown={(e) => {

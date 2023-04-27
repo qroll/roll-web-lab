@@ -6,10 +6,13 @@ import styled from "styled-components";
 import { useStateRef } from "../../../components/hooks";
 import React from "react";
 
+const INVALID_DATE = "invalid_date";
+type InvalidDate = typeof INVALID_DATE;
+
 interface RangeCalendarProps {
   currentFocus: "start" | "end";
-  startDate: LocalDate | null;
-  endDate: LocalDate | null;
+  startDate: LocalDate | InvalidDate | null;
+  endDate: LocalDate | InvalidDate | null;
   withButtons?: boolean;
   selectAny?: boolean;
   onChange?: (start: LocalDate | null, end: LocalDate | null) => void;
@@ -53,11 +56,15 @@ const RangeCalendarComponent: React.ForwardRefRenderFunction<CalendarRef, RangeC
   }, [focusedDate]);
 
   useEffect(() => {
-    setSelectedStartDate(startDate);
+    if (startDate !== INVALID_DATE) {
+      setSelectedStartDate(startDate);
+    }
   }, [startDate]);
 
   useEffect(() => {
-    setSelectedEndDate(endDate);
+    if (endDate !== INVALID_DATE) {
+      setSelectedEndDate(endDate);
+    }
   }, [endDate]);
 
   useImperativeHandle(
