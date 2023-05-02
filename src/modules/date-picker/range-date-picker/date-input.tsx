@@ -102,7 +102,7 @@ const DateInputComponent: React.ForwardRefRenderFunction<DateInputRef, DateInput
     }
   };
 
-  const hoverStyle = !!hoverDate && (value ? !hoverDate.isEqual(value) : true);
+  const hoverStyle = !!hoverDate && (value instanceof LocalDate ? !hoverDate.isEqual(value) : true);
 
   return (
     <InputWrapper

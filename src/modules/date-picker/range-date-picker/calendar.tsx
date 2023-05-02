@@ -34,8 +34,8 @@ const RangeCalendarComponent: React.ForwardRefRenderFunction<CalendarRef, RangeC
   { currentFocus, startDate, endDate, withButtons = false, selectAny = false, onChange, onHover, onCancel, onConfirm },
   ref
 ) => {
-  const [selectedStartDate, setSelectedStartDate, selectedStartDateRef] = useStateRef<LocalDate | null>(startDate);
-  const [selectedEndDate, setSelectedEndDate, selectedEndDateRef] = useStateRef<LocalDate | null>(endDate);
+  const [selectedStartDate, setSelectedStartDate, selectedStartDateRef] = useStateRef<LocalDate | null>(null);
+  const [selectedEndDate, setSelectedEndDate, selectedEndDateRef] = useStateRef<LocalDate | null>(null);
   const [focusedDate, setFocusedDate] = useState(LocalDate.now());
   const [hoveredDate, setHoveredDate] = useState<LocalDate | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
