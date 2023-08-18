@@ -1,25 +1,35 @@
-import React from "react";
+import React, { useEffect, useImperativeHandle, useRef } from "react";
 import styled from "styled-components";
+import CheckboxCheckedIcon from "../icons/checkbox-checked-icon";
+import CheckboxBlankIcon from "../icons/checkbox-blank-icon";
+import CheckboxMixedIcon from "../icons/checkbox-mixed-icon";
 
-const _Checkbox = (props: React.InputHTMLAttributes<HTMLInputElement>, ref: React.ForwardedRef<HTMLInputElement>) => {
-  const { checked, disabled, onChange, ...otherProps } = props;
+const _Checkbox = (
+  props: React.InputHTMLAttributes<HTMLInputElement> & { indeterminate?: boolean },
+  ref: React.ForwardedRef<HTMLInputElement>
+) => {
+  const { checked, indeterminate, ...otherProps } = props;
+  const elementRef = useRef<HTMLInputElement>();
+
+  useImperativeHandle(ref, () => elementRef.current!!);
+
+  useEffect(() => {
+    if (elementRef.current) {
+      elementRef.current.indeterminate = indeterminate || false;
+    }
+  }, [indeterminate]);
+
   return (
     <Container>
-      <Input
-        type="checkbox"
-        checked={checked}
-        disabled={disabled}
-        onChange={onChange}
-        ref={ref as any}
-        {...otherProps}
-      />
-      <SelectionIndicator />
-      <Border />
+      <Input type="checkbox" ref={elementRef as any} checked={checked} {...otherProps} />
+      <SelectionIndicator>
+        {indeterminate ? <CheckboxMixedIcon /> : checked ? <CheckboxCheckedIcon /> : <CheckboxBlankIcon />}
+      </SelectionIndicator>
     </Container>
   );
 };
 
-export const Checkbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(_Checkbox);
+export const Checkbox = React.forwardRef(_Checkbox);
 
 const Container = styled.div`
   position: relative;
@@ -34,6 +44,7 @@ const Container = styled.div`
 `;
 
 const Input = styled.input`
+  position: absolute;
   opacity: 0;
   height: 100%;
   width: 100%;
@@ -44,50 +55,23 @@ const Input = styled.input`
 `;
 
 const SelectionIndicator = styled.div`
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-
-  height: 60%;
-  width: 60%;
-  border-radius: 3px;
-
-  background: white;
+  height: 100%;
+  width: 100%;
+  color: #3070c5;
 
   ${Input}:hover:checked + & {
-    background: #204b83;
+    color: #204b83;
   }
 
   ${Input}:checked + & {
-    background: #3070c5;
+    color: #3070c5;
   }
 
-  ${Input}:disabled:checked + & {
-    background: #bcc4db;
-  }
-`;
-
-const Border = styled.div`
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-
-  height: 100%;
-  width: 100%;
-  border: 2px solid #3070c5;
-  border-radius: 3px;
-
-  ${Input}:hover + div + & {
-    border-color: #183863;
+  ${Input}:indeterminate + & {
+    color: #3070c5;
   }
 
-  ${Input}:disabled + div + & {
-    border-color: #bcc4db;
-  }
-
-  ${Input}:focus + div + & {
-    outline: 2px solid #bcc4db;
+  ${Input}:disabled + & {
+    color: #bcc4db;
   }
 `;
