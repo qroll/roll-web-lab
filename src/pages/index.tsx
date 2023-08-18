@@ -24,6 +24,8 @@ const Home: NextPage = () => {
             { label: "Combobox", href: "/a11y/combobox/simple" },
             { label: "Calendar", href: "/a11y/date-picker/simple" },
             { label: "Date range picker", href: "/a11y/date-picker/range" },
+            { label: "Treelist", href: "/a11y/tree/tree-list" },
+            { label: "Treelist (multi-select)", href: "/a11y/tree/multi-select-tree-list" },
           ]}
         />
       </PageContent>

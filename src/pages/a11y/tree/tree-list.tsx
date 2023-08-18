@@ -8,6 +8,7 @@ export default function TreeListPage() {
     <Page>
       <PageContent>
         <Type.Text>A tree list is used to represent a hierarchy of items.</Type.Text>
+        <Type.Text>Note: For some reason Voiceover on MacOS announces this as a table. I give up. 😔</Type.Text>
         <Type.H2 size="h300" mt="m" bold>
           WAI-ARIA checklist
         </Type.H2>
