@@ -3,7 +3,7 @@ import { Nullable } from "../../../components/common/types";
 import { ComboboxPage } from "../../../components/combobox/combobox-page";
 import {
   ComboboxWithAriaActivedescendant,
-  ComboboxWithAriaActivedescendantItem,
+  ComboboxItem,
 } from "../../../components/combobox/combobox-with-aria-activedescendant";
 import { Type } from "../../../components/typography/type";
 import { Checklist } from "../../../components/common/checklist";
@@ -19,7 +19,7 @@ export default function ComboboxWithAriaActivedescendantPage() {
     { id: 7, label: "space" },
     { id: 8, label: "vanilla" },
   ]);
-  const [value, setValue] = useState<Nullable<ComboboxWithAriaActivedescendantItem>>(null);
+  const [value, setValue] = useState<Nullable<ComboboxItem>>(null);
 
   return (
     <ComboboxPage

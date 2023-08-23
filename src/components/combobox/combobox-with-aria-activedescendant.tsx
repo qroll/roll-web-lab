@@ -2,20 +2,20 @@ import { useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 import { Nullable } from "../common/types";
 
-export type ComboboxWithAriaActivedescendantItem = { id: number; label: string };
+export type ComboboxItem = { id: number; label: string };
 
 interface ComboboxWithAriaActivedescendantProps {
-  items: ComboboxWithAriaActivedescendantItem[];
+  items: ComboboxItem[];
   label: string;
-  onChange?: (value: Nullable<ComboboxWithAriaActivedescendantItem>) => void;
-  value?: Nullable<ComboboxWithAriaActivedescendantItem>;
+  onChange?: (value: Nullable<ComboboxItem>) => void;
+  value?: Nullable<ComboboxItem>;
 }
 
 export function ComboboxWithAriaActivedescendant(props: ComboboxWithAriaActivedescendantProps) {
   const { items, label, value, onChange } = props;
 
-  const [selectedItem, setSelectedItem] = useState<Nullable<ComboboxWithAriaActivedescendantItem>>(value);
-  const [focusedItem, setFocusedItem] = useState<Nullable<ComboboxWithAriaActivedescendantItem>>(value);
+  const [selectedItem, setSelectedItem] = useState<Nullable<ComboboxItem>>(value);
+  const [focusedItem, setFocusedItem] = useState<Nullable<ComboboxItem>>(value);
   const [expanded, setExpanded] = useState(false);
   const comboboxWrapperRef = useRef<HTMLDivElement>(null);
   const comboboSelectionRef = useRef<HTMLInputElement>(null);
@@ -26,6 +26,135 @@ export function ComboboxWithAriaActivedescendant(props: ComboboxWithAriaActivede
   useEffect(() => {
     setSelectedItem(value);
   }, [value]);
+
+  const onComboboxBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+    if (!e.nativeEvent.relatedTarget || !comboboxWrapperRef.current?.contains(e.nativeEvent.relatedTarget as Node)) {
+      setExpanded(false);
+    }
+  };
+
+  const onComboboxClick = () => {
+    if (expanded) {
+      setExpanded(false);
+      comboboSelectionRef.current?.focus();
+    } else {
+      setExpanded(true);
+      if (focusedItem) {
+        const index = items.findIndex((item) => item === focusedItem);
+        itemRef.current[index].scrollIntoView();
+      } else {
+        nonItemRef.current?.scrollIntoView();
+      }
+    }
+  };
+
+  const onEmptyItemSelect = () => {
+    setExpanded(false);
+    comboboSelectionRef.current?.focus();
+    onChange?.(null);
+  };
+
+  const onEmptyItemHover = () => {
+    setFocusedItem(null);
+    nonItemRef.current?.scrollIntoView();
+  };
+
+  const onItemSelect = (item: ComboboxItem) => () => {
+    setExpanded(false);
+    comboboSelectionRef.current?.focus();
+    onChange?.(item);
+  };
+
+  const onItemHover = (item: ComboboxItem) => () => {
+    if (ignoreHoverWhenNavigatingRef.current) {
+      ignoreHoverWhenNavigatingRef.current = false;
+      return;
+    }
+    setFocusedItem(item);
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    switch (e.key) {
+      case "ArrowDown":
+        if (!expanded) {
+          return;
+        }
+        e.preventDefault();
+        focusNextItem();
+        break;
+      case "ArrowUp":
+        if (!expanded) {
+          return;
+        }
+        e.preventDefault();
+        focusPrevItem();
+        break;
+
+      case "Enter":
+      // spacebar
+      case " ":
+        e.preventDefault();
+        onConfirm();
+        break;
+      case "Escape":
+        if (!expanded) {
+          return;
+        }
+        e.preventDefault();
+        onCancel();
+        break;
+    }
+  };
+
+  const focusNextItem = () => {
+    ignoreHoverWhenNavigatingRef.current = true;
+
+    const index = items.findIndex((item) => item === focusedItem);
+    if (index === -1) {
+      setFocusedItem(items[0]);
+      itemRef.current[0].scrollIntoView();
+    } else {
+      const nextIndex = Math.min(index + 1, items.length - 1);
+      setFocusedItem(items[nextIndex]);
+      itemRef.current[nextIndex].scrollIntoView();
+    }
+  };
+
+  const focusPrevItem = () => {
+    ignoreHoverWhenNavigatingRef.current = true;
+
+    const index = items.findIndex((item) => item === focusedItem);
+    if (index === -1) {
+      // likely on the empty item, do nothing
+    } else if (index === 0) {
+      // already on the first item, so move to the empty item
+      setFocusedItem(null);
+      nonItemRef.current?.scrollIntoView();
+    } else {
+      const previousIndex = Math.max(index - 1, 0);
+      setFocusedItem(items[previousIndex]);
+      itemRef.current[previousIndex].scrollIntoView();
+    }
+  };
+
+  const onConfirm = () => {
+    if (expanded) {
+      setExpanded(false);
+      comboboSelectionRef.current?.focus();
+      onChange?.(focusedItem);
+    } else {
+      setExpanded(true);
+    }
+  };
+
+  const onCancel = () => {
+    setExpanded(false);
+    comboboSelectionRef.current?.focus();
+  };
+
+  // ===========================================================================
+  // RENDER
+  // ===========================================================================
 
   return (
     <div>
@@ -40,87 +169,9 @@ export function ComboboxWithAriaActivedescendant(props: ComboboxWithAriaActivede
           ref={comboboSelectionRef}
           tabIndex={0}
           $expanded={expanded}
-          onBlur={(e) => {
-            if (
-              !e.nativeEvent.relatedTarget ||
-              !comboboxWrapperRef.current?.contains(e.nativeEvent.relatedTarget as Node)
-            ) {
-              setExpanded(false);
-            }
-          }}
-          onClick={() => {
-            if (expanded) {
-              setExpanded(false);
-              comboboSelectionRef.current?.focus();
-            } else {
-              setExpanded(true);
-              if (focusedItem) {
-                const index = items.findIndex((item) => item === focusedItem);
-                itemRef.current[index].scrollIntoView();
-              } else {
-                nonItemRef.current?.scrollIntoView();
-              }
-            }
-          }}
-          onKeyDown={(e) => {
-            switch (e.key) {
-              case "ArrowDown": {
-                if (!expanded) {
-                  return;
-                }
-                ignoreHoverWhenNavigatingRef.current = true;
-                e.preventDefault();
-                const index = items.findIndex((item) => item === focusedItem);
-                if (focusedItem) {
-                  const nextIndex = Math.min(index + 1, items.length - 1);
-                  setFocusedItem(items[nextIndex]);
-                  itemRef.current[nextIndex].scrollIntoView();
-                } else {
-                  setFocusedItem(items[0]);
-                  itemRef.current[0].scrollIntoView();
-                }
-                break;
-              }
-              case "ArrowUp": {
-                if (!expanded) {
-                  return;
-                }
-                ignoreHoverWhenNavigatingRef.current = true;
-                e.preventDefault();
-                const index = items.findIndex((item) => item === focusedItem);
-                if (focusedItem) {
-                  const previousIndex = Math.max(index - 1, 0);
-                  setFocusedItem(items[previousIndex]);
-                  itemRef.current[previousIndex].scrollIntoView();
-                } else {
-                  setFocusedItem(items[items.length - 1]);
-                  itemRef.current[items.length - 1].scrollIntoView();
-                }
-                break;
-              }
-              case "Enter":
-              // spacebar
-              case " ": {
-                e.preventDefault();
-                if (expanded) {
-                  setExpanded(false);
-                  comboboSelectionRef.current?.focus();
-                  onChange?.(focusedItem);
-                } else {
-                  setExpanded(true);
-                }
-                break;
-              }
-              case "Escape":
-                if (!expanded) {
-                  return;
-                }
-                e.preventDefault();
-                setExpanded(false);
-                comboboSelectionRef.current?.focus();
-                break;
-            }
-          }}
+          onBlur={onComboboxBlur}
+          onClick={onComboboxClick}
+          onKeyDown={onKeyDown}
         >
           {selectedItem ? selectedItem.label : "---"}
         </ComboboxSelection>
@@ -133,15 +184,8 @@ export function ComboboxWithAriaActivedescendant(props: ComboboxWithAriaActivede
               aria-selected={!selectedItem}
               $selected={!selectedItem}
               $focused={!focusedItem}
-              onClick={() => {
-                setExpanded(false);
-                comboboSelectionRef.current?.focus();
-                onChange?.(null);
-              }}
-              onMouseOver={() => {
-                setFocusedItem(null);
-                nonItemRef.current?.scrollIntoView();
-              }}
+              onClick={onEmptyItemSelect}
+              onMouseOver={onEmptyItemHover}
             >
               ---
             </ComboboxListItem>
@@ -161,18 +205,8 @@ export function ComboboxWithAriaActivedescendant(props: ComboboxWithAriaActivede
                   aria-selected={selected}
                   $selected={selected}
                   $focused={focused}
-                  onClick={() => {
-                    setExpanded(false);
-                    comboboSelectionRef.current?.focus();
-                    onChange?.(item);
-                  }}
-                  onMouseOver={() => {
-                    if (ignoreHoverWhenNavigatingRef.current) {
-                      ignoreHoverWhenNavigatingRef.current = false;
-                      return;
-                    }
-                    setFocusedItem(item);
-                  }}
+                  onClick={onItemSelect(item)}
+                  onMouseOver={onItemHover(item)}
                 >
                   {label}
                 </ComboboxListItem>
