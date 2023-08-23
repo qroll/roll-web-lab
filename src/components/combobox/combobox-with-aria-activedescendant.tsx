@@ -162,9 +162,11 @@ export function ComboboxWithAriaActivedescendant(props: ComboboxWithAriaActivede
       <div ref={comboboxWrapperRef}>
         <ComboboxSelection
           role="combobox"
+          aria-labelledby="dropdown-label"
           aria-activedescendant={expanded ? `dropdown-listitem-${focusedItem ? focusedItem.id : "none"}` : undefined}
           aria-controls="dropdown-listitem-popup"
           aria-expanded={expanded}
+          aria-readonly={false}
           id="dropdown-input"
           ref={comboboSelectionRef}
           tabIndex={0}
@@ -172,9 +174,8 @@ export function ComboboxWithAriaActivedescendant(props: ComboboxWithAriaActivede
           onBlur={onComboboxBlur}
           onClick={onComboboxClick}
           onKeyDown={onKeyDown}
-        >
-          {selectedItem ? selectedItem.label : "---"}
-        </ComboboxSelection>
+          value={selectedItem ? selectedItem.label : "---"}
+        />
         <ComboboxListPositioning>
           <ComboboxList $expanded={expanded} role="listbox" id="dropdown-listitem-popup">
             <ComboboxListItem
@@ -225,7 +226,7 @@ const Label = styled.label`
   margin: 0 0 1rem 0;
 `;
 
-const ComboboxSelection = styled.div<{ $expanded: boolean }>`
+const ComboboxSelection = styled.input<{ $expanded: boolean }>`
   background: #fff;
   border: 1px solid #888;
   border-radius: 3px;
