@@ -38,9 +38,8 @@ export function ComboboxWithAriaActivedescendant(props: ComboboxWithAriaActivede
           aria-expanded={expanded}
           id="dropdown-input"
           ref={comboboSelectionRef}
+          tabIndex={0}
           $expanded={expanded}
-          readOnly
-          value={selectedItem ? selectedItem.label : "---"}
           onBlur={(e) => {
             if (
               !e.nativeEvent.relatedTarget ||
@@ -122,7 +121,9 @@ export function ComboboxWithAriaActivedescendant(props: ComboboxWithAriaActivede
                 break;
             }
           }}
-        />
+        >
+          {selectedItem ? selectedItem.label : "---"}
+        </ComboboxSelection>
         <ComboboxListPositioning>
           <ComboboxList $expanded={expanded} role="listbox" id="dropdown-listitem-popup">
             <ComboboxListItem
@@ -190,7 +191,7 @@ const Label = styled.label`
   margin: 0 0 1rem 0;
 `;
 
-const ComboboxSelection = styled.input<{ $expanded: boolean }>`
+const ComboboxSelection = styled.div<{ $expanded: boolean }>`
   background: #fff;
   border: 1px solid #888;
   border-radius: 3px;

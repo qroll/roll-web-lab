@@ -82,6 +82,12 @@ export function ComboboxWithTabindex(props: ComboboxWithTabindexProps) {
                 onChange?.(focusedItem);
               } else {
                 setExpanded(true);
+                if (focusedItem) {
+                  const index = items.findIndex((item) => item === focusedItem);
+                  itemRef.current[index].focus();
+                } else {
+                  nonItemRef.current?.focus();
+                }
               }
               break;
             }
@@ -103,9 +109,7 @@ export function ComboboxWithTabindex(props: ComboboxWithTabindexProps) {
           id="dropdown-input"
           ref={comboboSelectionRef}
           $expanded={expanded}
-          tabIndex={expanded ? -1 : undefined}
-          readOnly
-          value={selectedItem ? selectedItem.label : "---"}
+          tabIndex={expanded ? -1 : 0}
           onBlur={(e) => {
             if (
               !e.nativeEvent.relatedTarget ||
@@ -128,7 +132,9 @@ export function ComboboxWithTabindex(props: ComboboxWithTabindexProps) {
               }
             }
           }}
-        />
+        >
+          {selectedItem ? selectedItem.label : "---"}
+        </ComboboxSelection>
         <ComboboxListPositioning>
           <ComboboxList
             $expanded={expanded}
@@ -212,7 +218,7 @@ const Label = styled.label`
   margin: 0 0 1rem 0;
 `;
 
-const ComboboxSelection = styled.input<{ $expanded: boolean }>`
+const ComboboxSelection = styled.div<{ $expanded: boolean }>`
   background: #fff;
   border: 1px solid #888;
   border-radius: 3px;
